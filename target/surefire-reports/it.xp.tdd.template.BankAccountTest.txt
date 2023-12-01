@@ -1,0 +1,11 @@
+-------------------------------------------------------------------------------
+Test set: it.xp.tdd.template.BankAccountTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.033 s <<< FAILURE! -- in it.xp.tdd.template.BankAccountTest
+it.xp.tdd.template.BankAccountTest.testBankAccount_WhenUserDeposit50Euros_ShouldHave300Euros -- Time elapsed: 0.020 s <<< FAILURE!
+java.lang.AssertionError: Not implemented yet
+	at it.xp.tdd.template.BankAccountTest.testBankAccount_WhenUserDeposit50Euros_ShouldHave300Euros(BankAccountTest.java:18)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
