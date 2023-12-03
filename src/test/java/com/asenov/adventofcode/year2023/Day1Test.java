@@ -1,6 +1,6 @@
 package com.asenov.adventofcode.year2023;
 
-import org.junit.jupiter.api.Disabled;
+import com.asenov.adventofcode.year2023.day1.Day1;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

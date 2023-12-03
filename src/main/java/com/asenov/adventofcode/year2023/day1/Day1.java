@@ -1,4 +1,4 @@
-package com.asenov.adventofcode.year2023;
+package com.asenov.adventofcode.year2023.day1;
 
 import java.util.Comparator;
 import java.util.List;
