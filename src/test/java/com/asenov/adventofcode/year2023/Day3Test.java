@@ -115,13 +115,20 @@ class Day3Test {
     void solveExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day3-example.txt"));
         int result = Day3.solve(input);
-        assertEquals(4361, result);
+        assertEquals(467835, result);
     }
 
     @Test
-    void solveFirstPuzzle() throws IOException {
+    void solveFirstPartPuzzle() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day3-puzzle.txt"));
+        int result = Day3.solveFirstPart(input);
+        assertEquals(539713, result);
+    }
+
+    @Test
+    void solve() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day3-puzzle.txt"));
         int result = Day3.solve(input);
-        assertEquals(527024, result);
+        assertEquals(84159075, result);
     }
 }
