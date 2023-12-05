@@ -18,7 +18,6 @@ class Day5Test {
         Almanac almanac = new Almanac(input);
         Long lowestLocation = almanac.getLowestLocation();
 
-        assertEquals(4, almanac.getSeeds().size());
         assertEquals(2, almanac.getHumidityToLocation().size());
         assertFalse(almanac.getHumidityToLocation().get(0).contains(1L));
         assertTrue(almanac.getHumidityToLocation().get(0).contains(60L));
@@ -55,13 +54,21 @@ class Day5Test {
 
     @Test
     void solveSecondPartExample() throws IOException {
-        // List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day5-example.txt"));
-        assertTrue(true);
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day5-example.txt"));
+
+        Almanac almanac = new Almanac(input);
+        Long lowestLocation = almanac.getLowestLocation();
+
+        assertEquals(46L, lowestLocation);
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
-        // List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day5-puzzle.txt"));
-        assertTrue(true);
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day5-puzzle.txt"));
+
+        Almanac almanac = new Almanac(input);
+        Long lowestLocation = almanac.getLowestLocation();
+
+        assertEquals(46L, lowestLocation);
     }
 }
