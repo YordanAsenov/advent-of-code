@@ -2,8 +2,10 @@ package com.asenov.adventofcode.year2023.day4;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 public class Card {
@@ -22,6 +24,10 @@ public class Card {
             .toList();
     }
 
+    public Card(Integer id) {
+        this.id = id;
+    }
+
     public Card(String input) {
         String[] card = input.split(":");
         this.id = getCardId(card[0]);
@@ -30,7 +36,7 @@ public class Card {
         this.numbers = getNumbers(cardNumbers[1]);
     }
 
-    private static int getPoints(int cardWinningNumbers) {
+    private static int getScratchcards(int cardWinningNumbers) {
         if (cardWinningNumbers == 0)
             return 0;
         int points = 1;
@@ -41,11 +47,42 @@ public class Card {
         return points;
     }
 
-    public int getPoints() {
+    public int getScratchcards() {
         int cardWinningNumbers = (int) this.numbers.stream()
             .filter(n -> this.winningNumbers.contains(n))
             .count();
 
-        return getPoints(cardWinningNumbers);
+        return getScratchcards(cardWinningNumbers);
+    }
+
+    private static List<Integer> getScratchcardIds(int cardId, int cardWinningNumbers) {
+        List<Integer> scratchcardIds = new ArrayList<>();
+
+        while(cardWinningNumbers > 0) {
+            scratchcardIds.add(cardId + cardWinningNumbers);
+            cardWinningNumbers--;
+        }
+        return scratchcardIds;
+    }
+
+    public List<Integer> getScratchcardIds() {
+        int cardWinningNumbers = (int) this.numbers.stream()
+            .filter(n -> this.winningNumbers.contains(n))
+            .count();
+
+        return getScratchcardIds(this.id, cardWinningNumbers);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return Objects.equals(id, card.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
