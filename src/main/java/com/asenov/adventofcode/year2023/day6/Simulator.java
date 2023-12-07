@@ -2,36 +2,25 @@ package com.asenov.adventofcode.year2023.day6;
 
 import lombok.Data;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @Data
 public class Simulator {
-    private List<Race> races;
+    private Race race;
 
     public Simulator(List<String> input) {
-        List<String> durations = Arrays.stream(input.get(0)
+        String duration = input.get(0)
             .substring(5).trim()
-            .split(" "))
-            .filter(n -> !n.isEmpty() && !n.isBlank())
-            .toList();
+            .replace(" ", "");
 
-        List<String> distances = Arrays.stream(input.get(1)
+        String distance = input.get(1)
             .substring(9).trim()
-            .split(" "))
-            .filter(n -> !n.isEmpty() && !n.isBlank())
-            .toList();
+            .replace(" ", "");
 
-        this.races = IntStream.range(0, durations.size())
-            .boxed()
-            .map(index -> new Race(durations.get(index), distances.get(index)))
-            .toList();
+        this.race = new Race(duration, distance);
     }
 
-    public Integer solve() {
-        return this.races.stream()
-            .map(Race::countWaysToBeatTheRecord)
-            .reduce(1, (a,b) -> a * b);
+    public Long solve() {
+        return this.race.countWaysToBeatTheRecord();
     }
 }

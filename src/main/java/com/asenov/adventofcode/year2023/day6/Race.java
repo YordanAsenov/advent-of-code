@@ -4,18 +4,18 @@ import lombok.Data;
 
 @Data
 public class Race {
-    private Integer duration;
-    private Integer maxDistance;
+    private Long duration;
+    private Long maxDistance;
 
     public Race(String duration, String maxDistance) {
-        this.duration = Integer.parseInt(duration);
-        this.maxDistance = Integer.parseInt(maxDistance);
+        this.duration = Long.parseLong(duration);
+        this.maxDistance = Long.parseLong(maxDistance);
     }
 
-    public Integer countWaysToBeatTheRecord() {
-        Integer count = 0;
+    public Long countWaysToBeatTheRecord() {
+        Long count = 0L;
 
-        Integer chargingTime = 0;
+        Long chargingTime = 0L;
         while (chargingTime < duration) {
             if (((duration - chargingTime) * chargingTime) > this.maxDistance) {
                 count++;
