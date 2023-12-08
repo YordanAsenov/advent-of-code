@@ -12,15 +12,47 @@ import java.util.stream.Collectors;
 public class Hand implements Comparable<Hand> {
     private Integer bid;
     private String hand;
+    private String shadowHand;
     private Map<Character, Long> cards;
+    private Map<Character, Long> shadowCards;
 
     public Hand(String input) {
         String[] row = input.split(" ");
         this.bid = Integer.parseInt(row[1]);
         this.hand = row[0];
-        this.cards = row[0].chars()
+        this.cards = getCards(row[0]);
+        this.shadowHand = getShadowHand(hand, cards);
+        this.shadowCards = getCards(this.shadowHand);
+    }
+
+    private static Map<Character, Long> getCards(String input) {
+        return input.chars()
             .mapToObj((int value) -> (char) value)
             .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+    }
+
+    public Character getCardWithHighestOccurrence(Map<Character, Long> cards) {
+        Map.Entry<Character, Long> maxEntry = null;
+        for (Map.Entry<Character, Long> entry : cards.entrySet()) {
+            if (maxEntry == null ||
+                (entry.getKey() != 'J' &&
+                    entry.getValue().compareTo(maxEntry.getValue()) > 0 ||
+                    (entry.getValue().compareTo(maxEntry.getValue()) == 0 &&
+                        highCard(entry.getKey(), maxEntry.getKey()) > 0))
+            ) {
+                maxEntry = entry;
+            }
+        }
+        return maxEntry.getKey();
+    }
+
+    private String getShadowHand(String hand, Map<Character, Long> cards) {
+        if (!hand.contains("J")) {
+            return hand;
+        }
+
+        Character cardWithHighestOccurrence = getCardWithHighestOccurrence(cards);
+        return hand.replace('J', cardWithHighestOccurrence);
     }
 
     private static boolean fiveOfKind(List<Long> values) {
@@ -59,6 +91,7 @@ public class Hand implements Comparable<Hand> {
 
     private static Map<Character, Integer> cardWeights() {
         Map<Character, Integer> weights = new HashMap<>();
+        weights.put('J', 1);
         weights.put('2', 2);
         weights.put('3', 3);
         weights.put('4', 4);
@@ -68,10 +101,9 @@ public class Hand implements Comparable<Hand> {
         weights.put('8', 8);
         weights.put('9', 9);
         weights.put('T', 10);
-        weights.put('J', 11);
-        weights.put('Q', 12);
-        weights.put('K', 13);
-        weights.put('A', 14);
+        weights.put('Q', 11);
+        weights.put('K', 12);
+        weights.put('A', 13);
         return weights;
     }
 
@@ -83,8 +115,8 @@ public class Hand implements Comparable<Hand> {
 
     @Override
     public int compareTo(Hand other) {
-        List<Long> values = this.cards.values().stream().toList();
-        List<Long> otherValues = other.cards.values().stream().toList();
+        List<Long> values = this.shadowCards.values().stream().toList();
+        List<Long> otherValues = other.shadowCards.values().stream().toList();
 
         int fiveOfKind = Boolean.compare(fiveOfKind(values), fiveOfKind(otherValues));
         if (fiveOfKind != 0) {
@@ -116,12 +148,12 @@ public class Hand implements Comparable<Hand> {
             return onePair;
         }
 
-        char[] handCards = this.hand.toCharArray();
-        char[] otherHandCards = other.hand.toCharArray();
+        char[] handShadowCards = this.hand.toCharArray();
+        char[] otherHandShadowCards = other.hand.toCharArray();
 
         int index = 0;
         while (index < 5) {
-            int highCard = highCard(handCards[index], otherHandCards[index]);
+            int highCard = highCard(handShadowCards[index], otherHandShadowCards[index]);
             if (highCard != 0) {
                 return highCard;
             }
