@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Day8Test {
     @Test
@@ -30,10 +29,10 @@ class Day8Test {
         assertEquals("ZZZ", navigator.getNavigationMap().get("CCC").getLeft());
         assertEquals("GGG", navigator.getNavigationMap().get("CCC").getRight());
 
-        Long result1 = navigator.solve("AAA","AAA");
+        Long result1 = navigator.solve(List.of("AAA"),List.of("AAA"));
         assertEquals(0, result1);
 
-        Long result2 = navigator.solve("AAA","ZZZ");
+        Long result2 = navigator.solve(List.of("AAA"),List.of("ZZZ"));
         assertEquals(2, result2);
     }
 
@@ -42,7 +41,7 @@ class Day8Test {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day8-example2.txt"));
         Navigator navigator = new Navigator(input);
 
-        Long result = navigator.solve("AAA","ZZZ");
+        Long result = navigator.solve(List.of("AAA"),List.of("ZZZ"));
 
         assertEquals(6, result);
     }
@@ -52,20 +51,39 @@ class Day8Test {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day8-puzzle.txt"));
         Navigator navigator = new Navigator(input);
 
-        Long result = navigator.solve("AAA","ZZZ");
+        Long result = navigator.solve(List.of("AAA"),List.of("ZZZ"));
 
         assertEquals(19631, result);
     }
 
     @Test
     void solveSecondPartExample() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day8-example.txt"));
-        assertTrue(true);
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day8-example3.txt"));
+
+        Navigator navigator = new Navigator(input);
+
+        List<String> aNodes = navigator.getNodesEndingWith("A");
+        assertEquals(2, aNodes.size());
+
+        List<String> zNodes = navigator.getNodesEndingWith("Z");
+        assertEquals(2, zNodes.size());
+
+        Long result = navigator.solve(aNodes,zNodes);
+        assertEquals(6, result);
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day8-puzzle.txt"));
-        assertTrue(true);
+
+        Navigator navigator = new Navigator(input);
+        List<String> aNodes = navigator.getNodesEndingWith("A");
+        assertEquals(6, aNodes.size());
+
+        List<String> zNodes = navigator.getNodesEndingWith("Z");
+        assertEquals(6, zNodes.size());
+
+        Long steps = navigator.solve(aNodes, zNodes);
+        assertEquals(21003205388413L, steps);
     }
 }

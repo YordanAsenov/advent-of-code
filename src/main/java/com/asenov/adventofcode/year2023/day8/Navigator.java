@@ -38,29 +38,46 @@ public class Navigator {
         this.navigationMap = getNavigationMap(input);
     }
 
-    public Long solve(String departure, String destination) {
+    public List<String> getNodesEndingWith(String suffix) {
+        return this.navigationMap.keySet().stream()
+            .filter(key -> key.endsWith(suffix))
+            .toList();
+    }
+
+    public Long minSteps(String departurePosition, List<String> destinationPositions, Map<String, Crossroad> navigationMap) {
+        Ghost ghost = new Ghost(departurePosition, navigationMap);
+
         Long steps = 0L;
+        boolean destinationReached = destinationPositions.contains(ghost.getCurrentPosition());
 
-        String currentPosition = departure;
-
-        while (!currentPosition.equals(destination)) {
+        while (!destinationReached) {
             for (Direction direction : this.directions) {
                 steps++;
+                ghost.move(direction);
+                destinationReached = destinationPositions.contains(ghost.getCurrentPosition());
 
-                Crossroad crossroad = navigationMap.get(currentPosition);
-                if (Direction.LEFT == direction) {
-                    currentPosition = crossroad.getLeft();
-                } else {
-                    currentPosition = crossroad.getRight();
-                }
-
-                if (currentPosition.equals(destination)) {
+                if (destinationReached) {
                     return steps;
                 }
             }
-
         }
 
         return steps;
+    }
+
+    private Long greatestCommonDivisor(Long a, Long b) {
+        if (a == 0)
+            return b;
+
+        return greatestCommonDivisor(b % a, a);
+    }
+    private Long leastCommonDenominator(Long a, Long b) {
+        return (a * b) / greatestCommonDivisor(a, b);
+    }
+
+    public Long solve(List<String> departurePositions, List<String> destinationPositions) {
+        return departurePositions.stream()
+            .map(position -> minSteps(position, destinationPositions, this.navigationMap))
+            .reduce(1L, this::leastCommonDenominator);
     }
 }
