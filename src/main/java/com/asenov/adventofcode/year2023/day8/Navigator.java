@@ -54,8 +54,8 @@ public class Navigator {
             for (Direction direction : this.directions) {
                 steps++;
                 ghost.move(direction);
-                destinationReached = destinationPositions.contains(ghost.getCurrentPosition());
 
+                destinationReached = destinationPositions.contains(ghost.getCurrentPosition());
                 if (destinationReached) {
                     return steps;
                 }
