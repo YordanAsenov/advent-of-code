@@ -36,4 +36,21 @@ public class Sequence {
 
         return values.get(values.size() - 1) + predictNextValue(subSequence, nextValue);
     }
+
+    public Long predictPreviousValue() {
+        return predictPreviousValue(this.values, null);
+    }
+
+    private Long predictPreviousValue(List<Long> values, Long previousValue) {
+        List<Long> subSequence = new ArrayList<>();
+        for (int index = 0; index < values.size() - 1; index++) {
+            subSequence.add(values.get(index + 1) - values.get(index));
+        }
+
+        if (subSequence.stream().allMatch(v -> v.equals(0L))) {
+            return values.get(0);
+        }
+
+        return values.get(0) - predictPreviousValue(subSequence, previousValue);
+    }
 }

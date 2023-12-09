@@ -18,9 +18,15 @@ public class Report {
         this.sequences = getSequences(input);
     }
 
-    public Long predict() {
+    public Long predictNext() {
         return this.sequences.stream()
             .map(Sequence::predictNextValue)
+            .reduce(0L, Long::sum);
+    }
+
+    public Long predictPrevious() {
+        return this.sequences.stream()
+            .map(Sequence::predictPreviousValue)
             .reduce(0L, Long::sum);
     }
 }
