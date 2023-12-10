@@ -2,10 +2,7 @@ package com.asenov.adventofcode.year2023.day10;
 
 import lombok.Data;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 public class Labyrinth {
@@ -50,75 +47,78 @@ public class Labyrinth {
             .findFirst();
     }
 
-    public Long solve() {
+    public Integer solve() {
         Position startingPosition = locateStartingPoint().get();
 
-        Long stepsFromEast = countStepsBeginningFromEast(startingPosition);
-        Long stepsFromWest = countStepsBeginningFromWest(startingPosition);
-        Long stepsFromNorth = countStepsBeginningFromNorth(startingPosition);
-        Long stepsFromSouth = countStepsBeginningFromSouth(startingPosition);
-        List<Long> steps = List.of(stepsFromNorth, stepsFromSouth, stepsFromEast, stepsFromWest);
+        List<Pipe> pipesFromEast = getPipesFromEast(startingPosition);
+        List<Pipe> pipesFromWest = getPipesFromWest(startingPosition);
+        List<Pipe> pipesFromNorth = getPipesFromNorth(startingPosition);
+        List<Pipe> pipesFromSouth = getPipesFromSouth(startingPosition);
+        List<List<Pipe>> allPipes = List.of(pipesFromNorth, pipesFromSouth, pipesFromEast, pipesFromWest);
 
-        return steps.stream()
+        return allPipes.stream()
+            .filter(pipe -> pipe != null && !pipe.isEmpty())
+            .map(List::size)
             .max(Long::compare)
-            .map(max -> max / 2)
+            .map(max -> (max + 1) / 2)
             .get();
     }
 
-    public Long countStepsBeginningFromEast(Position position) {
+    public List<Pipe> getPipesFromEast(Position position) {
         if (position.getColumn() >= this.columns - 1) {
-            return 0L;
+            return List.of();
         }
         return countStepsFrom(new Position(position.getRow(), position.getColumn() + 1));
     }
 
-    public Long countStepsBeginningFromWest(Position position) {
+    public List<Pipe> getPipesFromWest(Position position) {
         if (position.getColumn() <= 0) {
-            return 0L;
+            return List.of();
         }
         return countStepsFrom(new Position(position.getRow(), position.getColumn() - 1));
     }
 
-    public Long countStepsBeginningFromNorth(Position position) {
+    public List<Pipe> getPipesFromNorth(Position position) {
         if (position.getRow() <= 0) {
-            return 0L;
+            return List.of();
         }
         return countStepsFrom(new Position(position.getRow() - 1, position.getColumn()));
     }
 
-    public Long countStepsBeginningFromSouth(Position position) {
+    public List<Pipe> getPipesFromSouth(Position position) {
         if (position.getRow() >= this.rows - 1) {
-            return 0L;
+            return List.of();
         }
         return countStepsFrom(new Position(position.getRow() + 1, position.getColumn()));
     }
 
-    public Long countStepsFrom(Position position) {
+    public List<Pipe> countStepsFrom(Position position) {
+        List<Pipe> result = new ArrayList<>();
+
         Position currentPosition = position;
         Position previousPosition = currentPosition;
 
-        Long steps = 0L;
         while (currentPosition != null) {
             Pipe pipe = getPipe(currentPosition);
             if (pipe == null) {
-                return 0L;
+                return List.of();
             }
 
-            steps++;
+            result.add(pipe);
 
             Pipe nextPipe = getPipe(pipe.getNext(previousPosition));
             if (nextPipe == null) {
-                return 0L;
+                return List.of();
             }
 
             if (nextPipe.isStartingPoint()) {
-                return steps + 1;
+                return result;
             }
 
             previousPosition = currentPosition;
             currentPosition = nextPipe.getPosition();
         }
 
-        return steps;
+        return result;
     }
 }
