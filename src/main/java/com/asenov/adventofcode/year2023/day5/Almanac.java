@@ -54,23 +54,13 @@ public class Almanac {
     }
 
     public Long getLocation(Long seed) {
-        // System.out.println("/*************************************/");
-        // System.out.println("Seed: " + seed);
         Long soil = getDestinationValue(seed, seedToSoil);
-        // System.out.println("Soil: " + soil);
         Long fertilizer = getDestinationValue(soil, soilToFertilizer);
-        // System.out.println("Fertilizer: " + fertilizer);
         Long water = getDestinationValue(fertilizer, fertilizerToWater);
-        // System.out.println("Water: " + water);
         Long light = getDestinationValue(water, waterToLight);
-        // System.out.println("Light: " + light);
         Long temperature = getDestinationValue(light, lightToTemperature);
-        // System.out.println("Temperature: " + temperature);
         Long humidity = getDestinationValue(temperature, temperatureToHumidity);
-        // System.out.println("Humidity: " + humidity);
         Long location = getDestinationValue(humidity, humidityToLocation);
-        // System.out.println("Location: " + location);
-        // System.out.println("/*************************************/");
         return location;
     }
 
