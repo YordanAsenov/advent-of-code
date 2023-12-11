@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Day10Test {
     @Test
@@ -38,6 +37,8 @@ class Day10Test {
 
         assertEquals(new Position(1,2), sourthWestPipe.getPreviousPipe());
         assertEquals(new Position(2,3), sourthWestPipe.getNextPipe());
+
+        assertEquals(17, labyrinth.getGroundTiles().size());
     }
 
     @Test
@@ -48,7 +49,9 @@ class Day10Test {
 
         assertEquals(new Position(1,1), labyrinth.locateStartingPoint().get());
 
-        assertEquals(4, labyrinth.solve());
+        assertEquals(4, labyrinth.farthestPointFromStartingPoint());
+
+        assertEquals(17, labyrinth.getGroundTiles().size());
     }
 
     @Test
@@ -59,7 +62,7 @@ class Day10Test {
 
         assertEquals(new Position(2,0), labyrinth.locateStartingPoint().get());
 
-        assertEquals(8, labyrinth.solve());
+        assertEquals(8, labyrinth.farthestPointFromStartingPoint());
     }
 
     @Test
@@ -68,18 +71,51 @@ class Day10Test {
 
         Labyrinth labyrinth = new Labyrinth(input);
 
-        assertEquals(6951, labyrinth.solve());
+        assertEquals(6951, labyrinth.farthestPointFromStartingPoint());
     }
 
     @Test
-    void solveSecondPartExample() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day10-example1.txt"));
-        assertTrue(true);
+    void solveSecondPartExample2() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day10-example2.txt"));
+
+        Labyrinth labyrinth = new Labyrinth(input);
+
+        assertEquals(1L, labyrinth.solve());
+    }
+
+    @Test
+    void solveSecondPartExample4() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day10-example4.txt"));
+
+        Labyrinth labyrinth = new Labyrinth(input);
+
+        assertEquals(4L, labyrinth.solve());
+    }
+
+    @Test
+    void solveSecondPartExample5() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day10-example5.txt"));
+
+        Labyrinth labyrinth = new Labyrinth(input);
+
+        assertEquals(37L, labyrinth.solve());
+    }
+
+    @Test
+    void solveSecondPartExample6() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day10-example6.txt"));
+
+        Labyrinth labyrinth = new Labyrinth(input);
+
+        assertEquals(4L, labyrinth.solve());
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day10-puzzle.txt"));
-        assertTrue(true);
+
+        Labyrinth labyrinth = new Labyrinth(input);
+
+        assertEquals(1L, labyrinth.solve());
     }
 }
