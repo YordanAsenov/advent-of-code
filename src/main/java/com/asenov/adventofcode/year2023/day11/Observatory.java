@@ -15,13 +15,22 @@ public class Observatory {
     private Integer originalRows;
     private Integer originalColumns;
     private List<String> spaces;
+    private Integer expansionFactor;
+    private List<String> expandedSpaces;
     private Map<Integer, Position> galaxies;
 
-    public Observatory(List<String> spaces) {
+    public Observatory(List<String> spaces, int expansionFactor) {
         this.spaces = spaces;
         this.originalRows = spaces.size();
         this.originalColumns = spaces.isEmpty() ? 0 : spaces.get(0).length();
-        this.galaxies = findGalaxies(expandTheUniverse(this.spaces, this.originalRows, this.originalColumns));
+        this.expansionFactor = expansionFactor;
+        this.expandedSpaces = expandTheUniverse(
+            this.spaces,
+            this.originalRows,
+            this.originalColumns,
+            this.expansionFactor
+        );
+        this.galaxies = findGalaxies(this.expandedSpaces);
     }
 
     private Map<Integer, Position> findGalaxies(List<String> spaces) {
@@ -59,11 +68,11 @@ public class Observatory {
         return pairs;
     }
 
-    public List<String> expandTheUniverse(List<String> spaces, int originalRows, int originalColumns) {
+    public List<String> expandTheUniverse(List<String> spaces, int originalRows, int originalColumns, int factor) {
         List<String> universe = new ArrayList<>(spaces);
+        int expansionFactor = factor - 1;
 
         List<Integer> rowsToExpand = new ArrayList<>();
-
         for (int i = 0; i < this.originalRows; i++) {
             String row = this.spaces.get(i);
             if (!row.contains("#")) {
@@ -72,7 +81,9 @@ public class Observatory {
         }
 
         for (int i = 0; i < rowsToExpand.size(); i++) {
-            universe.add(rowsToExpand.get(i) + i, ".".repeat(originalColumns));
+            for (int z = 0; z < expansionFactor; z++) {
+                universe.add(rowsToExpand.get(i) + (z + i + 1), ".".repeat(originalColumns));
+            }
         }
 
         List<Integer> columnsToExpand = new ArrayList<>();
@@ -89,10 +100,10 @@ public class Observatory {
         }
 
         for (int i = 0; i < columnsToExpand.size(); i++) {
-            for (int j = 0; j < originalRows + rowsToExpand.size(); j++) {
+            for (int j = 0; j < originalRows + (rowsToExpand.size() * expansionFactor); j++) {
                 String row = universe.get(j);
-                String newRow = row.substring(0, columnsToExpand.get(i) + i) + "." +
-                    row.substring(columnsToExpand.get(i) + i);
+                String newRow = row.substring(0, columnsToExpand.get(i) + i * expansionFactor) + ".".repeat(expansionFactor) +
+                    row.substring(columnsToExpand.get(i) + i * expansionFactor);
                 universe.set(j, newRow);
             }
         }
