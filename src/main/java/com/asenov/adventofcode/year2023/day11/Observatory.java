@@ -16,7 +16,6 @@ public class Observatory {
     private Integer originalColumns;
     private List<String> spaces;
     private Integer expansionFactor;
-    private List<String> expandedSpaces;
     private Map<Integer, Position> galaxies;
 
     public Observatory(List<String> spaces, int expansionFactor) {
@@ -24,13 +23,7 @@ public class Observatory {
         this.originalRows = spaces.size();
         this.originalColumns = spaces.isEmpty() ? 0 : spaces.get(0).length();
         this.expansionFactor = expansionFactor;
-        this.expandedSpaces = expandTheUniverse(
-            this.spaces,
-            this.originalRows,
-            this.originalColumns,
-            this.expansionFactor
-        );
-        this.galaxies = findGalaxies(this.expandedSpaces);
+        this.galaxies = findGalaxies(this.spaces);
     }
 
     private Map<Integer, Position> findGalaxies(List<String> spaces) {
@@ -68,24 +61,18 @@ public class Observatory {
         return pairs;
     }
 
-    public List<String> expandTheUniverse(List<String> spaces, int originalRows, int originalColumns, int factor) {
-        List<String> universe = new ArrayList<>(spaces);
-        int expansionFactor = factor - 1;
-
+    public List<Integer> expandedRows(List<String> spaces, int originalRows) {
         List<Integer> rowsToExpand = new ArrayList<>();
-        for (int i = 0; i < this.originalRows; i++) {
-            String row = this.spaces.get(i);
+        for (int i = 0; i < originalRows; i++) {
+            String row = spaces.get(i);
             if (!row.contains("#")) {
                 rowsToExpand.add(i);
             }
         }
+        return rowsToExpand;
+    }
 
-        for (int i = 0; i < rowsToExpand.size(); i++) {
-            for (int z = 0; z < expansionFactor; z++) {
-                universe.add(rowsToExpand.get(i) + (z + i + 1), ".".repeat(originalColumns));
-            }
-        }
-
+    public List<Integer> expandedColumns(List<String> spaces, int originalRows, int originalColumns) {
         List<Integer> columnsToExpand = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < originalColumns; i++) {
@@ -98,22 +85,15 @@ public class Observatory {
             }
             sb = new StringBuilder();
         }
-
-        for (int i = 0; i < columnsToExpand.size(); i++) {
-            for (int j = 0; j < originalRows + (rowsToExpand.size() * expansionFactor); j++) {
-                String row = universe.get(j);
-                String newRow = row.substring(0, columnsToExpand.get(i) + i * expansionFactor) + ".".repeat(expansionFactor) +
-                    row.substring(columnsToExpand.get(i) + i * expansionFactor);
-                universe.set(j, newRow);
-            }
-        }
-
-        return universe;
+        return columnsToExpand;
     }
 
     public Long solve() {
         int size = this.galaxies.size();
         List<String> pairs = getPairs(size);
+
+        List<Integer> expandedRows = expandedRows(this.spaces, this.originalRows);
+        List<Integer> expandedColumns = expandedColumns(this.spaces, this.originalRows, this.originalColumns);
 
         long sum = 0L;
 
@@ -128,10 +108,29 @@ public class Observatory {
             int rowDiff = Math.max(position1.getRow(), position2.getRow()) -
                 Math.min(position1.getRow(), position2.getRow());
 
+            Long jumps = 0L;
+
+            long rowJumps = IntStream.range(
+                    Math.min(position1.getRow(), position2.getRow()),
+                    Math.max(position1.getRow(), position2.getRow())
+                ).boxed()
+                .filter(expandedRows::contains)
+                .count();
+
+            long columnJumps = IntStream.range(
+                    Math.min(position1.getColumn(), position2.getColumn()),
+                    Math.max(position1.getColumn(), position2.getColumn())
+                ).boxed()
+                .filter(expandedColumns::contains)
+                .count();
+
+            jumps += (rowJumps * this.expansionFactor);
+            jumps += (columnJumps * this.expansionFactor);
+
             int colsDiff = Math.max(position1.getColumn(), position2.getColumn()) -
                 Math.min(position1.getColumn(), position2.getColumn());
 
-            sum += (rowDiff + colsDiff);
+            sum += ((rowDiff - rowJumps) + (colsDiff - columnJumps) + jumps);
         }
 
         return sum;

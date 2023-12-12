@@ -41,47 +41,27 @@ class Day11Test {
     }
 
     @Test
-    void solveFirstPartExample1() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example1.txt"));
+    void solveFirstPartExample() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example.txt"));
 
-        Observatory observatory = new Observatory(input, 2);
+        Observatory observatory = new Observatory(input, 1);
 
         assertEquals(9, observatory.getGalaxies().size());
         assertEquals(374L, observatory.solve());
     }
 
     @Test
-    void solveFirstPartExample2() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example1.txt"));
-
-        Observatory observatory = new Observatory(input, 2);
-
-        List<String> expectedResult = Files.readAllLines(Path.of("src/test/resources/input/day11-example2.txt"));
-        assertEquals(expectedResult, observatory.getExpandedSpaces());
-    }
-
-    @Test
-    void solveFirstPartExample3() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example1.txt"));
-
-        Observatory observatory = new Observatory(input, 3);
-
-        List<String> expectedResult = Files.readAllLines(Path.of("src/test/resources/input/day11-example3.txt"));
-        assertEquals(expectedResult, observatory.getExpandedSpaces());
-    }
-
-    @Test
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-puzzle.txt"));
 
-        Observatory observatory = new Observatory(input, 2);
+        Observatory observatory = new Observatory(input, 1);
 
         assertEquals(9521550L, observatory.solve());
     }
 
     @Test
     void solveSecondPartExample1() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example1.txt"));
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example.txt"));
 
         Observatory observatory = new Observatory(input, 10);
 
@@ -90,7 +70,7 @@ class Day11Test {
 
     @Test
     void solveSecondPartExample2() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example1.txt"));
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example.txt"));
 
         Observatory observatory = new Observatory(input, 100);
 
@@ -98,11 +78,20 @@ class Day11Test {
     }
 
     @Test
-    void solveSecondPartPuzzle() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example1.txt"));
+    void solveSecondPartExample3() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-example.txt"));
 
         Observatory observatory = new Observatory(input, 1000000);
 
-        assertEquals(8410L, observatory.solve());
+        assertEquals(82000210L, observatory.solve());
+    }
+
+    @Test
+    void solveSecondPartPuzzle() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day11-puzzle.txt"));
+
+        Observatory observatory = new Observatory(input, 1000000);
+
+        assertEquals(298932923702L, observatory.solve());
     }
 }
