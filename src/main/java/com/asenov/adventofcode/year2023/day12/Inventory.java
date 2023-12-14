@@ -25,10 +25,10 @@ public class Inventory {
             .orElse(0);
     }
 
-    public Integer getCombinationsSum() {
+    public Double getCombinationsSum() {
         return this.compositions.stream()
             .map(Composition::getCombinations)
-            .reduce(Integer::sum)
-            .orElse(0);
+            .reduce(Double::sum)
+            .orElse(0D);
     }
 }
