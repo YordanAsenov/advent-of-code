@@ -2,310 +2,254 @@ package com.asenov.adventofcode.year2023.day10;
 
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 @Data
 public class Labyrinth {
     private int rows;
     private int columns;
 
-    private Map<Position, Pipe> pipes;
+    private List<String> expandedInput;
+    private Map<Position, Tile> tiles;
     private List<Position> groundTiles;
+    private Position startingPosition;
+    private List<Tile> connectedPipes;
+    private List<Position> insideTiles;
+    private List<Position> visitedTiles;
 
-    private Map<Position, Pipe> getPipes(List<String> input) {
-        Map<Position, Pipe> pipesMap = new HashMap<>();
+    private static String cleanRow(String input) {
+        return input.replace("[", "")
+            .replace("]", "");
+    }
+    private static List<String> expandInput(List<String> input) {
+        List<String> result = new ArrayList<>();
+
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+        StringBuilder sb3 = new StringBuilder();
+
+        for (String row : input) {
+            char[] characters = row.toCharArray();
+            for (char character : characters) {
+                Tile tile = new Tile(character);
+                List<List<String>> expandedPipe = tile.expand();
+                sb1.append(cleanRow(expandedPipe.get(0).toString()));
+                sb2.append(cleanRow(expandedPipe.get(1).toString()));
+                sb3.append(cleanRow(expandedPipe.get(2).toString()));
+            }
+
+            result.add(sb1.toString());
+            result.add(sb2.toString());
+            result.add(sb3.toString());
+
+            sb1 = new StringBuilder();
+            sb2 = new StringBuilder();
+            sb3 = new StringBuilder();
+        }
+
+        return result;
+    }
+
+    private Map<Position, Tile> initializeTiles(List<String> input) {
+        Map<Position, Tile> pipesMap = new HashMap<>();
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.columns; j++) {
                 Position position = new Position(i, j);
-                Pipe pipe = new Pipe(input.get(i).charAt(j), position);
-                if (pipe.isPipe()) {
-                    pipesMap.put(position, pipe);
-                }
+                pipesMap.put(position, new Tile(input.get(i).charAt(j), position));
             }
         }
 
         return pipesMap;
     }
 
-    private List<Position> getGroundTiles(List<String> input) {
-        List<Position> tiles = new ArrayList<>();
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.columns; j++) {
-                if (input.get(i).charAt(j) == '.') {
-                    Position position = new Position(i, j);
-                    tiles.add(position);
-                }
-            }
-        }
-
-        return tiles;
-    }
-
     public Labyrinth(List<String> input) {
-        this.rows = input.size();
-        this.columns = input.get(0).length();
-        this.pipes = getPipes(input);
-        this.groundTiles = getGroundTiles(input);
+        this.expandedInput = expandInput(input);
+        this.rows = expandedInput.size();
+        this.columns = expandedInput.get(0).length();
+        this.tiles = initializeTiles(expandedInput);
+        this.startingPosition = startingPoint(tiles);
+        this.connectedPipes = getConnectedPipes(startingPosition, rows, columns, tiles);
+        this.visitedTiles = new ArrayList<>();
+        this.insideTiles = getInsideTiles(tiles, connectedPipes);
     }
 
-    public Pipe getPipe(Position position) {
-        return this.pipes.get(position);
+    public void print() {
+        for (int i = 0; i < this.expandedInput.size(); i++) {
+            String row = this.expandedInput.get(i);
+            for (int j = 0; j < row.length(); j++) {
+                Tile tile = new Tile(row.charAt(j), new Position(i, j));
+
+                if (visitedTiles.contains(tile.getPosition()) &&
+                    !connectedPipes.contains(tile)) {
+                    System.out.print("\033[43m"); // set background
+                }
+
+                if (this.connectedPipes.contains(tile)) {
+                    System.out.print("\u001B[31m" + "#"); // red
+                } else if (this.insideTiles.contains(tile.getPosition())) {
+                    System.out.print("\033[0;32m" + "I");
+                } else if(tile.isPipe()) {
+                    System.out.print("\u001B[34m" + row.charAt(j)); // blue
+                } else {
+                    //System.out.print("O");
+                    System.out.print(row.charAt(j));
+                }
+
+                System.out.print("\u001B[0m"); // reset
+            }
+
+            System.out.println();
+        }
     }
 
-    public Pipe getPipe(int row, int column) {
-        return this.pipes.get(new Position(row, column));
+    private static Position startingPoint(Map<Position, Tile> pipes) {
+        return pipes.values().stream()
+            .filter(Tile::isStartingPoint)
+            .map(Tile::getPosition)
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
-    public Optional<Position> locateStartingPoint() {
-        return this.pipes.values().stream()
-            .filter(Pipe::isStartingPoint)
-            .map(Pipe::getPosition)
-            .findFirst();
-    }
+    private static List<Tile> getConnectedPipes(Position startingPosition, int rows, int columns, Map<Position, Tile> pipes) {
+        List<Tile> pipesFromEast = getPipesFrom(startingPosition, startingPosition.get(Direction.EAST), rows, columns, pipes);
+        List<Tile> pipesFromWest = getPipesFrom(startingPosition, startingPosition.get(Direction.WEST), rows, columns, pipes);
+        List<Tile> pipesFromNorth = getPipesFrom(startingPosition, startingPosition.get(Direction.NORTH), rows, columns, pipes);
+        List<Tile> pipesFromSouth = getPipesFrom(startingPosition, startingPosition.get(Direction.SOUTH), rows, columns, pipes);
 
-    public List<Pipe> getConnectedPipes() {
-        Position startingPosition = locateStartingPoint().get();
-
-        List<Pipe> pipesFromEast = getPipesFromEast(startingPosition);
-        List<Pipe> pipesFromWest = getPipesFromWest(startingPosition);
-        List<Pipe> pipesFromNorth = getPipesFromNorth(startingPosition);
-        List<Pipe> pipesFromSouth = getPipesFromSouth(startingPosition);
-
-        List<Pipe> connectedPipes = List.of(pipesFromNorth, pipesFromSouth, pipesFromEast, pipesFromWest).stream()
+        return Stream.of(pipesFromNorth, pipesFromSouth, pipesFromEast, pipesFromWest)
             .flatMap(List::stream)
             .distinct()
             .toList();
-
-        return connectedPipes;
     }
 
-    public Integer farthestPointFromStartingPoint() {
-        Position startingPosition = locateStartingPoint().get();
+    public Optional<Integer> getFarthestPointFromStartingPoint() {
+        List<Tile> pipesFromEast = getPipesFrom(startingPosition, startingPosition.get(Direction.EAST), rows, columns, tiles);
+        List<Tile> pipesFromWest = getPipesFrom(startingPosition, startingPosition.get(Direction.WEST), rows, columns, tiles);
+        List<Tile> pipesFromNorth = getPipesFrom(startingPosition, startingPosition.get(Direction.NORTH), rows, columns, tiles);
+        List<Tile> pipesFromSouth = getPipesFrom(startingPosition, startingPosition.get(Direction.SOUTH), rows, columns, tiles);
 
-        List<Pipe> pipesFromEast = getPipesFromEast(startingPosition);
-        List<Pipe> pipesFromWest = getPipesFromWest(startingPosition);
-        List<Pipe> pipesFromNorth = getPipesFromNorth(startingPosition);
-        List<Pipe> pipesFromSouth = getPipesFromSouth(startingPosition);
-
-        List<List<Pipe>> allPipes = List.of(pipesFromNorth, pipesFromSouth, pipesFromEast, pipesFromWest);
-
-        List<Pipe> connectedPipes = allPipes.stream()
-            .max(Comparator.comparing(List::size))
-            .get();
-        return (connectedPipes.size()) / 2;
+        return Stream.of(pipesFromNorth, pipesFromSouth, pipesFromEast, pipesFromWest)
+            .map(List::size)
+            .max(Comparator.comparing(Integer::intValue))
+            .map(m -> (m / 3) / 2);
     }
 
-    public List<Pipe> getPipesFromEast(Position position) {
-        if (position.getColumn() >= this.columns - 1) {
+    public static List<Tile> getPipesFrom(
+        Position from,
+        Position to,
+        int rows,
+        int columns,
+        Map<Position, Tile> pipes
+    ) {
+        if (from == null ||
+            from.getX() <= 0 ||
+            from.getX() >= rows - 1 ||
+            from.getY() <= 0 ||
+            from.getY() >= columns - 1
+        ) {
             return List.of();
         }
-        return countStepsFrom(position, new Position(position.getRow(), position.getColumn() + 1));
+        return getConnectedPipes(from, to, pipes);
     }
 
-    public List<Pipe> getPipesFromWest(Position position) {
-        if (position.getColumn() <= 0) {
-            return List.of();
-        }
-        return countStepsFrom(position, new Position(position.getRow(), position.getColumn() - 1));
+    private static Tile getPipe(Position position, Map<Position, Tile> pipes) {
+        return pipes.get(position);
     }
 
-    public List<Pipe> getPipesFromNorth(Position position) {
-        if (position.getRow() <= 0) {
-            return List.of();
-        }
-        return countStepsFrom(position, new Position(position.getRow() - 1, position.getColumn()));
-    }
+    private static List<Tile> getConnectedPipes(Position from, Position to, Map<Position, Tile> connectedPipes) {
+        List<Tile> result = new ArrayList<>();
 
-    public List<Pipe> getPipesFromSouth(Position position) {
-        if (position.getRow() >= this.rows - 1) {
-            return List.of();
-        }
-        return countStepsFrom(position, new Position(position.getRow() + 1, position.getColumn()));
-    }
+        Position current = to;
 
-    public List<Pipe> countStepsFrom(Position previousPosition, Position position) {
-        List<Pipe> result = new ArrayList<>();
-
-        Position currentPosition = position;
-
-        while (currentPosition != null) {
-            Pipe pipe = getPipe(currentPosition);
-            if (pipe == null) {
+        while (current != null) {
+            Tile tile = getPipe(current, connectedPipes);
+            if (tile == null) {
                 return List.of();
             }
 
-            result.add(pipe);
+            result.add(tile);
 
-            Pipe nextPipe = getPipe(pipe.getNext(previousPosition));
-            if (nextPipe == null) {
+            Tile nextTile = getPipe(tile.getNext(from), connectedPipes);
+            if (nextTile == null) {
                 return List.of();
             }
 
-            if (nextPipe.isStartingPoint()) {
-                result.add(nextPipe);
+            if (nextTile.isStartingPoint()) {
+                result.add(nextTile);
                 return result;
             }
 
-            previousPosition = currentPosition;
-            currentPosition = nextPipe.getPosition();
+            from = current;
+            current = nextTile.getPosition();
         }
 
         return result;
     }
 
-    private Optional<Integer> firstConnectedPipeColumn(int row, List<Position> connectedPipes) {
-        return connectedPipes.stream()
-            .filter(position -> position.getRow() == row)
-            .map(Position::getColumn)
-            .min(Integer::compareTo);
+    private static Position getFirstUpperLeftPipePosition(Map<Position, Tile> tiles, List<Tile> connectedPipes) {
+        Integer firstRow = tiles.values().stream()
+            .filter(connectedPipes::contains)
+            .map(Tile::getPosition)
+            .map(Position::getX)
+            .min(Integer::compareTo).get();
+
+        Integer firstColumn = tiles.values().stream()
+            .filter(connectedPipes::contains)
+            .map(Tile::getPosition)
+            .filter(p -> p.getX() == firstRow)
+            .map(Position::getY)
+            .min(Integer::compareTo).get();
+
+        return new Position(firstRow, firstColumn);
     }
 
-    private Optional<Integer> lastConnectedPipeColumn(int row, List<Position> connectedPipes) {
-        return connectedPipes.stream()
-            .filter(position -> position.getRow() == row)
-            .map(Position::getColumn)
-            .max(Integer::compareTo);
-    }
+    public List<Position> getInsideTiles(Map<Position, Tile> tiles, List<Tile> connectedPipes) {
+        Position startPosition = getFirstUpperLeftPipePosition(tiles, connectedPipes).get(Direction.SOUTH).get(Direction.EAST);
 
-    private Optional<Integer> firstConnectedPipeRow(int column, List<Position> connectedPipes) {
-        return connectedPipes.stream()
-            .filter(position -> position.getColumn() == column)
-            .map(Position::getRow)
-            .min(Integer::compareTo);
-    }
+        List<Position> tilesInside = new ArrayList<>();
+        //List<Position> visited = new ArrayList<>();
+        Queue<Position> toVisit = new ArrayDeque<>(List.of(startPosition));
 
-    private Optional<Integer> lastConnectedPipeRow(int column, List<Position> connectedPipes) {
-        return connectedPipes.stream()
-            .filter(position -> position.getColumn() == column)
-            .map(Position::getRow)
-            .max(Integer::compareTo);
-    }
+        while (!toVisit.isEmpty()) {
+            Position currentPosition = toVisit.poll();
+            if (visitedTiles.contains(currentPosition)) {
+                continue;
+            }
 
-    private boolean isInside(
-        Position groundTile,
-        List<Position> connectedPipes,
-        List<Position> otherTiles,
-        Optional<Integer> firstConnectedPipeRow,
-        Optional<Integer> firstConnectedPipeColumn,
-        Optional<Integer> lastConnectedPipeRow,
-        Optional<Integer> lastConnectedPipeColumn
-    ) {
-        if (connectedPipes.contains(groundTile))
-            return false;
+            Tile tile = tiles.get(currentPosition);
+            if (tile == null) {
+                visitedTiles.add(currentPosition);
+                continue;
+            }
 
-        if (firstConnectedPipeRow.isEmpty() || groundTile.getRow() < firstConnectedPipeRow.get()) {
-            return false;
-        }
-        if (firstConnectedPipeColumn.isEmpty() || groundTile.getColumn() < firstConnectedPipeColumn.get()) {
-            return false;
-        }
-        if (firstConnectedPipeRow.isPresent() && groundTile.getRow() < firstConnectedPipeRow.get()) {
-            return false;
-        }
-        if (lastConnectedPipeRow.isPresent() && groundTile.getRow() > lastConnectedPipeRow.get()) {
-            return false;
-        }
+            if (connectedPipes.contains(tile)) {
+                visitedTiles.add(currentPosition);
+                continue;
+            }
 
-        if (firstConnectedPipeColumn.isPresent() && groundTile.getColumn() < firstConnectedPipeColumn.get()) {
-            return false;
-        }
-        if (lastConnectedPipeColumn.isPresent() && groundTile.getColumn() > lastConnectedPipeColumn.get()) {
-            return false;
-        }
+            if (tile.isGroundTile()) {
+                tilesInside.add(currentPosition);
+                tilesInside.add(currentPosition);
+                tilesInside.add(currentPosition);
+            }
 
-        Position leftTile = new Position(groundTile.getRow(), groundTile.getColumn() - 1);
-        Position upperTile = new Position(groundTile.getRow() - 1, groundTile.getColumn());
-        if (otherTiles.contains(leftTile) || otherTiles.contains(upperTile)) {
-            return false;
-        }
+            if (tile.isPipe()) {
+                tilesInside.add(currentPosition);
+            }
 
-        return true;
-    }
-
-    private void print(
-        List<Position> connectedPipes,
-        List<Position> outsideTiles,
-        List<Position> insideTiles,
-        List<Position> otherTiles
-    ) {
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.columns; j++) {
-                Position tile = new Position(i, j);
-                if (connectedPipes.contains(tile)) {
-                    System.out.print("#");
-                }
-
-                if (outsideTiles.contains(tile)) {
-                    System.out.print("O");
-                }
-
-                if (insideTiles.contains(tile)) {
-                    System.out.print("I");
-                }
-
-                if (otherTiles.contains(tile)) {
-                    System.out.print("X");
+            List<Position> neighbors = currentPosition.getPositionsAround();
+            for (Position neighbor : neighbors) {
+                if (!visitedTiles.contains(neighbor)) {
+                    toVisit.add(neighbor);
                 }
             }
-            System.out.println("");
-        }
-    }
 
-    public int solve() {
-        List<Position> connectedPipes = getConnectedPipes().stream()
-            .map(Pipe::getPosition)
-            .toList();
-
-        List<Position> outsideTiles = new ArrayList<>();
-        List<Position> insideTiles = new ArrayList<>();
-        List<Position> otherTiles = new ArrayList<>();
-
-        for (int i = 0; i < this.rows; i++) {
-            Optional<Integer> firstConnectedPipeColumn = firstConnectedPipeColumn(i, connectedPipes);
-            Optional<Integer> lastConnectedPipeColumn = lastConnectedPipeColumn(i, connectedPipes);
-
-            for (int j = 0; j < this.columns; j++) {
-                Position groundTile = new Position(i, j);
-                if (connectedPipes.contains(groundTile)) {
-                    continue;
-                }
-
-                if (!groundTiles.contains(groundTile) && !connectedPipes.contains(groundTile)) {
-                    otherTiles.add(groundTile);
-                    continue;
-                }
-
-                Optional<Integer> firstConnectedPipeRow = firstConnectedPipeRow(j, connectedPipes);
-                Optional<Integer> lastConnectedPipeRow = lastConnectedPipeRow(j, connectedPipes);
-
-                if (!isInside(
-                    groundTile,
-                    connectedPipes,
-                    otherTiles,
-                    firstConnectedPipeRow,
-                    firstConnectedPipeColumn,
-                    lastConnectedPipeRow,
-                    lastConnectedPipeColumn)
-                ) {
-                    outsideTiles.add(groundTile);
-                } else {
-                    insideTiles.add(groundTile);
-                }
-            }
+            visitedTiles.add(currentPosition);
         }
 
-        print(connectedPipes, outsideTiles, insideTiles, otherTiles);
-
-        int total = this.rows * this.columns;
-        int outside = outsideTiles.size();
-        int inside = insideTiles.size();
-        int other = otherTiles.size();
-
-        return inside;
+        return tilesInside;
     }
 }
