@@ -13,6 +13,8 @@
         <maven.compiler.target>21</maven.compiler.target>
         <java.version>21</java.version>
 
+        <java.tuples.version>1.2</java.tuples.version>
+
         <lombok.version>1.18.30</lombok.version>
 
         <junit.version>5.10.0</junit.version>
@@ -26,6 +28,11 @@
         <pitest.junit.plugin.version>1.2.0</pitest.junit.plugin.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.javatuples</groupId>
+            <artifactId>javatuples</artifactId>
+            <version>${java.tuples.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
