@@ -8,27 +8,20 @@ import java.util.List;
 public class Inventory {
     private final List<Composition> compositions;
 
-    private List<Composition> initCompositions(List<String> input) {
+    private List<Composition> initCompositions(List<String> input, Integer repeat) {
         return input.stream()
-            .map(Composition::new)
+            .map(i -> new Composition(i, repeat))
             .toList();
     }
 
-    public Inventory(List<String> input) {
-        this.compositions = initCompositions(input);
+    public Inventory(List<String> input, Integer repeat) {
+        this.compositions = initCompositions(input, repeat);
     }
 
-    public Integer getMaxUnknownValues() {
+    public Long solve() {
         return this.compositions.stream()
-            .map(Composition::countUnknownValues)
-            .max(Integer::compareTo)
-            .orElse(0);
-    }
-
-    public Double getCombinationsSum() {
-        return this.compositions.stream()
-            .map(Composition::getCombinations)
-            .reduce(Double::sum)
-            .orElse(0D);
+            .map(Composition::countArrangements)
+            .reduce(Long::sum)
+            .orElse(0L);
     }
 }

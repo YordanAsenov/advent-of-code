@@ -12,65 +12,114 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class Day12Test {
     @Test
-    void solveFirstPartExample1() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day12-example1.txt"));
-
-        Inventory inventory = new Inventory(input);
-
-        assertEquals(6, inventory.getCompositions().size());
-        assertEquals(3, inventory.getCompositions().get(0).getContiguousDamagedGroups().size());
-
-        assertTrue(inventory.getCompositions().get(0).isValid());
-        assertTrue(inventory.getCompositions().get(1).isValid());
-        assertTrue(inventory.getCompositions().get(2).isValid());
-        assertTrue(inventory.getCompositions().get(3).isValid());
-        assertTrue(inventory.getCompositions().get(4).isValid());
-        assertTrue(inventory.getCompositions().get(5).isValid());
-
-        assertEquals(3, inventory.getCompositions().get(0).extractGroups().size());
-        assertEquals(3, inventory.getCompositions().get(1).extractGroups().size());
-        assertEquals(4, inventory.getCompositions().get(2).extractGroups().size());
-        assertEquals(3, inventory.getCompositions().get(3).extractGroups().size());
-        assertEquals(3, inventory.getCompositions().get(4).extractGroups().size());
-        assertEquals(3, inventory.getCompositions().get(5).extractGroups().size());
+    void testNoSprings() {
+        String input = "";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(0, inventory.solve());
     }
 
     @Test
-    void solveFirstPartExample2() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day12-example2.txt"));
+    void testNoDamagedSprings() {
+        String input = ". 0";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(0, inventory.solve());
+    }
 
-        Inventory inventory = new Inventory(input);
+    @Test
+    void testOneDamagedSpring() {
+        String input = "# 1";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(1, inventory.solve());
+    }
 
-        // assertEquals(9, inventory.getMaxUnknownValues());
+    @Test
+    void testTwoDamagedSprings() {
+        String input = "## 2";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(1, inventory.solve());
+    }
 
-        assertEquals(1D, inventory.getCompositions().get(0).getCombinations());
-        /*assertEquals(4D, inventory.getCompositions().get(1).getCombinations());
-        assertEquals(1D, inventory.getCompositions().get(2).getCombinations());
-        assertEquals(1D, inventory.getCompositions().get(3).getCombinations());
-        assertEquals(4D, inventory.getCompositions().get(4).getCombinations());
-        assertEquals(10D, inventory.getCompositions().get(5).getCombinations());
+    @Test
+    void testTwoSeparatedDamagedSprings() {
+        String input = "#.# 1,1";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(1, inventory.solve());
+    }
 
-        assertEquals(21D, inventory.getCombinationsSum()); */
+    @Test
+    void testTwoUnknownSprings() {
+        String input = "??.# 1,1";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(2, inventory.solve());
+    }
+
+    @Test
+    void testThreeSeparatedUnknownSprings() {
+        String input = "???.### 1,1,3";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(1, inventory.solve());
+    }
+
+    @Test
+    void testLastUnknownSpring() {
+        String input = "##? 3";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(1, inventory.solve());
+    }
+
+    @Test
+    void testSevenAlternatedUnknownSprings() {
+        String input = "?#?#?#?#?#?#?#? 1,3,1,6";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(1, inventory.solve());
+    }
+
+    @Test
+    void testFourConsecutiveUnknownSprings() {
+        String input = "????.#...#... 4,1,1";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(1, inventory.solve());
+    }
+
+    @Test
+    void testMultipleArrangements1() {
+        String input = "????.######..#####. 1,6,5";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(4, inventory.solve());
+    }
+
+    @Test
+    void testMultipleArrangements2() {
+        String input = "?###???????? 3,2,1";
+        Inventory inventory = new Inventory(List.of(input), 1);
+        assertEquals(10, inventory.solve());
+    }
+
+    @Test
+    void solveFirstPartExample() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day12-example.txt"));
+        Inventory inventory = new Inventory(input, 1);
+        assertEquals(21, inventory.solve());
     }
 
     @Test
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day12-puzzle.txt"));
-
-        Inventory inventory = new Inventory(input);
-
-        assertEquals(8075, inventory.getCombinationsSum());
+        Inventory inventory = new Inventory(input, 1);
+        assertEquals(8075, inventory.solve());
     }
 
     @Test
     void solveSecondPartExample() throws IOException {
-        // List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day12-example.txt"));
-        assertTrue(true);
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day12-example.txt"));
+        Inventory inventory = new Inventory(input, 5);
+        assertEquals(525152, inventory.solve());
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
-        // List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day12-puzzle.txt"));
-        assertTrue(true);
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/day12-puzzle.txt"));
+        Inventory inventory = new Inventory(input, 5);
+        assertEquals(4232520187524L, inventory.solve());
     }
 }
