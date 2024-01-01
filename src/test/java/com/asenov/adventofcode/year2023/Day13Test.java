@@ -1,5 +1,6 @@
 package com.asenov.adventofcode.year2023;
 
+import com.asenov.adventofcode.utils.ListUtils;
 import com.asenov.adventofcode.year2023.day13.Pattern;
 import com.asenov.adventofcode.year2023.day13.Puzzle;
 import org.junit.jupiter.api.Test;
@@ -20,11 +21,11 @@ class Day13Test {
 
         Pattern firstPattern = puzzle.getPatterns().get(0);
         assertEquals(0, puzzle.countReflections(firstPattern.getRows(), null));
-        assertEquals(5, puzzle.countReflections(Puzzle.transpose(firstPattern.getRows()), null));
+        assertEquals(5, puzzle.countReflections(ListUtils.transpose(firstPattern.getRows()), null));
 
         Pattern secondPattern = puzzle.getPatterns().get(1);
         assertEquals(4, puzzle.countReflections(secondPattern.getRows(), null));
-        assertEquals(0, puzzle.countReflections(Puzzle.transpose(secondPattern.getRows()), null));
+        assertEquals(0, puzzle.countReflections(ListUtils.transpose(secondPattern.getRows()), null));
 
         assertEquals(405, puzzle.solve());
     }

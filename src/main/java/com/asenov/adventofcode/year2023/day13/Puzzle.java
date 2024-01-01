@@ -1,11 +1,11 @@
 package com.asenov.adventofcode.year2023.day13;
 
+import com.asenov.adventofcode.utils.ListUtils;
 import lombok.Data;
 import org.javatuples.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Data
 public class Puzzle {
@@ -35,19 +35,6 @@ public class Puzzle {
 
     public Puzzle(List<String> input) {
         this.patterns = getPatterns(input);
-    }
-
-    public static List<String> transpose(List<String> rows) {
-        List<String> result = new ArrayList<>();
-        final int columns = rows.get(0).length();
-        for (int i = 0; i < columns; i++) {
-            StringBuilder sb = new StringBuilder();
-            for (String row : rows) {
-                sb.append(row.charAt(i));
-            }
-            result.add(sb.toString());
-        }
-        return result;
     }
 
     private static List<Integer> consecutiveRows(List<String> rows) {
@@ -139,7 +126,7 @@ public class Puzzle {
     public Integer solve() {
         return this.patterns.stream()
             .map(p -> {
-                List<String> columns = transpose(p.getRows());
+                List<String> columns = ListUtils.transpose(p.getRows());
                 return countReflections(columns, null) +
                         countReflections(p.getRows(), null) * 100;
             })
@@ -151,7 +138,7 @@ public class Puzzle {
 
         for (Pattern pattern : this.patterns) {
             Integer originalRowReflections = countReflections(pattern.getRows(), null);
-            Integer originalColumnReflections = countReflections(transpose(pattern.getRows()), null);
+            Integer originalColumnReflections = countReflections(ListUtils.transpose(pattern.getRows()), null);
 
             List<Pair<Integer, Integer>> reflections = new ArrayList<>();
 
@@ -160,7 +147,7 @@ public class Puzzle {
                 .distinct()
                 .map(p -> {
                     var rows = countReflections(p.getRows(), originalRowReflections);
-                    var cols = countReflections(transpose(p.getRows()), originalColumnReflections);
+                    var cols = countReflections(ListUtils.transpose(p.getRows()), originalColumnReflections);
                     if (rows > 0) {
                         cols = 0;
                     }
@@ -171,12 +158,12 @@ public class Puzzle {
                 reflections.addAll(rowPatterns);
             }
 
-            List<Pattern> alternativeColumnPatterns = getAlternativePatterns(transpose(pattern.getRows()));
+            List<Pattern> alternativeColumnPatterns = getAlternativePatterns(ListUtils.transpose(pattern.getRows()));
             List<Pair<Integer, Integer>> columnPatterns = alternativeColumnPatterns.stream()
                 .distinct()
                 .map(p -> {
                     var rows = countReflections(p.getRows(), originalColumnReflections);
-                    var cols = countReflections(transpose(p.getRows()), originalRowReflections);
+                    var cols = countReflections(ListUtils.transpose(p.getRows()), originalRowReflections);
                     if (rows > 0) {
                         cols = 0;
                     }
