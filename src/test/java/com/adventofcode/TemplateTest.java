@@ -1,4 +1,4 @@
-package com.adventofcode.year2023;
+package com.adventofcode;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TemplateTest {
     @Test
     void solveFirstPartExample() throws IOException {
-        // List<String> input = Files.readAllLines(Path.of("src/test/resources/input/dayX-example.txt"));
+        // List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/dayX/first-example.txt"));
         assertTrue(true);
     }
 
@@ -21,7 +21,7 @@ class TemplateTest {
 
     @Test
     void solveSecondPartExample() throws IOException {
-        // List<String> input = Files.readAllLines(Path.of("src/test/resources/input/dayX-example.txt"));
+        // List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/dayX/first-example.txt"));
         assertTrue(true);
     }
 
