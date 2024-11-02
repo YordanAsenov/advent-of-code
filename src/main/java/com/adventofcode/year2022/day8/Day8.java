@@ -1,10 +1,12 @@
-package com.adventofcode.year2022.day9;
+package com.adventofcode.year2022.day8;
 
 import java.util.List;
 
-public class Day9 {
+public class Day8 {
+
     public static long solve(List<String> input) {
-        return 0;
+        Forest forest = new Forest(input);
+        return forest.countVisibleTrees();
     }
     
     public static long solve2(List<String> input) {
