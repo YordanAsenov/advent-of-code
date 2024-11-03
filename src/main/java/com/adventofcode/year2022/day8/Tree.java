@@ -6,5 +6,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class Tree {
+    private Position position;
     private int height;
 }
