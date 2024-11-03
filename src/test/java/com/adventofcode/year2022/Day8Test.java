@@ -14,14 +14,14 @@ class Day8Test {
     @Test
     void solveFirstPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2022/day8/first-example.txt"));
-        long count = Day8.solve(input);
+        int count = Day8.solve(input);
         assertEquals(21, count);
     }
 
     @Test
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2022/day8/first-puzzle.txt"));
-        long count = Day8.solve(input);
+        int count = Day8.solve(input);
         assertEquals(1708, count);
     }
 
@@ -29,13 +29,13 @@ class Day8Test {
     void solveSecondPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2022/day8/second-example.txt"));
         long count = Day8.solve2(input);
-        assertEquals(1, count);
+        assertEquals(8, count);
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2022/day8/second-puzzle.txt"));
         long count = Day8.solve2(input);
-        assertEquals(1, count);
+        assertEquals(504000, count);
     }
 }

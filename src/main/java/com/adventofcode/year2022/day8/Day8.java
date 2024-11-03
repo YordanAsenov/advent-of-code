@@ -4,12 +4,13 @@ import java.util.List;
 
 public class Day8 {
 
-    public static long solve(List<String> input) {
+    public static int solve(List<String> input) {
         Forest forest = new Forest(input);
         return forest.countVisibleTrees();
     }
     
-    public static long solve2(List<String> input) {
-        return 0;
+    public static int solve2(List<String> input) {
+        Forest forest = new Forest(input);
+        return forest.getMaxScenicScore();
     }
 }

@@ -40,31 +40,58 @@ public class Forest {
         return this.trees.get(position);
     }
 
-    private Integer getBiggestTreeHeightAlongTheDirection(Position position, Direction direction) {
-        Integer biggestHeight = null;
+    private Tree findBiggestTreeAlongDirection(Tree originTree, Direction direction) {
+        Position position = getNextPosition(originTree.getPosition(), direction);
+        Tree tree = getTree(position);
 
-        Tree tree;
-        do {
+        Tree farthestTree = null;
+        while (tree != null) {
+            if (tree.getHeight() >= originTree.getHeight()) {
+                return tree;
+            }
+
+            farthestTree = tree;
             position = getNextPosition(position, direction);
             tree = getTree(position);
-            if (tree != null && (biggestHeight == null || tree.getHeight() > biggestHeight)) {
-                biggestHeight = tree.getHeight();
-            }
-        } while (tree != null);
+        }
 
-        return biggestHeight;
+        return farthestTree;
     }
 
-    private boolean isTreeVisibleFrom(Tree tree, Direction direction) {
-        Integer height = getBiggestTreeHeightAlongTheDirection(tree.getPosition(), direction);
-        return height == null || tree.getHeight() > height;
+    private boolean isTreeVisibleFrom(Tree originTree, Direction direction) {
+        Tree biggestTreeAlongDirection = findBiggestTreeAlongDirection(originTree, direction);
+        return biggestTreeAlongDirection == null || originTree.getHeight() > biggestTreeAlongDirection.getHeight();
     }
 
-    private boolean isTreeVisible(Tree tree) {
-        return isTreeVisibleFrom(tree, Direction.NORTH) ||
-            isTreeVisibleFrom(tree, Direction.SOUTH) ||
-            isTreeVisibleFrom(tree, Direction.WEST) ||
-            isTreeVisibleFrom(tree, Direction.EAST);
+    private boolean isTreeVisible(Tree originTree) {
+        return isTreeVisibleFrom(originTree, Direction.NORTH) ||
+            isTreeVisibleFrom(originTree, Direction.SOUTH) ||
+            isTreeVisibleFrom(originTree, Direction.WEST) ||
+            isTreeVisibleFrom(originTree, Direction.EAST);
+    }
+
+    private static int getDistance(Position a, Position b) {
+        int xAxisDistance = (a.getX() > b.getX()) ? (a.getX() - b.getX()) : (b.getX() - a.getX());
+        int yAxisDistance = (a.getY() > b.getY()) ? (a.getY() - b.getY()) : (b.getY() - a.getY());
+        return xAxisDistance + yAxisDistance;
+    }
+
+    private int getTreeScenicScore(Tree tree) {
+        Tree northBiggestTree = findBiggestTreeAlongDirection(tree, Direction.NORTH);
+        Tree southBiggestTree = findBiggestTreeAlongDirection(tree, Direction.SOUTH);
+        Tree westBiggestTree = findBiggestTreeAlongDirection(tree, Direction.WEST);
+        Tree eastBiggestTree = findBiggestTreeAlongDirection(tree, Direction.EAST);
+
+        int distanceNorth = northBiggestTree != null ?
+            getDistance(tree.getPosition(), northBiggestTree.getPosition()): 0;
+        int distanceSouth = southBiggestTree != null ?
+            getDistance(tree.getPosition(), southBiggestTree.getPosition()) : 0;
+        int distanceWest = westBiggestTree != null ?
+            getDistance(tree.getPosition(), westBiggestTree.getPosition()) : 0;
+        int distanceEast = eastBiggestTree != null ?
+            getDistance(tree.getPosition(), eastBiggestTree.getPosition()) : 0;
+
+        return distanceNorth * distanceSouth * distanceWest * distanceEast;
     }
 
     public int countVisibleTrees() {
@@ -74,13 +101,32 @@ public class Forest {
             String row = input.get(i);
             for (int j = 0; j < row.length(); j++) {
                 Position position = new Position(j, i);
-                Tree tree = getTree(position);
-                if (isTreeVisible(tree)) {
+                Tree originTree = getTree(position);
+                if (isTreeVisible(originTree)) {
                     count++;
                 }
             }
         }
 
         return count;
+    }
+
+    public int getMaxScenicScore() {
+        int maxScenicScore = 0;
+
+        for (int i = 0; i < input.size(); i++) {
+            String row = input.get(i);
+            for (int j = 0; j < row.length(); j++) {
+                Position position = new Position(j, i);
+                Tree tree = getTree(position);
+
+                int scenicScore = getTreeScenicScore(tree);
+                if (scenicScore > maxScenicScore) {
+                    maxScenicScore = scenicScore;
+                }
+            }
+        }
+
+        return maxScenicScore;
     }
 }
