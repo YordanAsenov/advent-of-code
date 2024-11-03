@@ -1,4 +1,4 @@
-package com.adventofcode.year2022.day8;
+package com.adventofcode.utils;
 
 public enum Direction {
     NORTH,

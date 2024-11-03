@@ -1,4 +1,4 @@
-package com.adventofcode.year2023.day10;
+package com.adventofcode.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

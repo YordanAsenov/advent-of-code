@@ -1,5 +1,8 @@
 package com.adventofcode.year2022.day8;
 
+import com.adventofcode.utils.Direction;
+import com.adventofcode.utils.Position;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

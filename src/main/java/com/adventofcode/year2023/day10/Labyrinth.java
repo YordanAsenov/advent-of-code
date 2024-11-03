@@ -1,5 +1,7 @@
 package com.adventofcode.year2023.day10;
 
+import com.adventofcode.utils.Direction;
+import com.adventofcode.utils.Position;
 import lombok.Data;
 
 import java.util.*;
