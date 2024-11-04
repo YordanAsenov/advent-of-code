@@ -30,21 +30,14 @@ public class Forest {
         initForest(input);
     }
 
-    private static Position getNextPosition(Position position, Direction direction) {
-        return switch (direction) {
-            case NORTH -> new Position(position.getX(), position.getY() - 1);
-            case EAST -> new Position(position.getX() + 1, position.getY());
-            case WEST -> new Position(position.getX() - 1, position.getY());
-            case SOUTH -> new Position(position.getX(), position.getY() + 1);
-        };
-    }
+
 
     private Tree getTree(Position position) {
         return this.trees.get(position);
     }
 
     private Tree findBiggestTreeAlongDirection(Tree originTree, Direction direction) {
-        Position position = getNextPosition(originTree.getPosition(), direction);
+        Position position = Position.getNextPosition(originTree.getPosition(), direction);
         Tree tree = getTree(position);
 
         Tree farthestTree = null;
@@ -54,7 +47,7 @@ public class Forest {
             }
 
             farthestTree = tree;
-            position = getNextPosition(position, direction);
+            position = Position.getNextPosition(position, direction);
             tree = getTree(position);
         }
 
@@ -73,12 +66,6 @@ public class Forest {
             isTreeVisibleFrom(originTree, Direction.EAST);
     }
 
-    private static int getDistance(Position a, Position b) {
-        int xAxisDistance = (a.getX() > b.getX()) ? (a.getX() - b.getX()) : (b.getX() - a.getX());
-        int yAxisDistance = (a.getY() > b.getY()) ? (a.getY() - b.getY()) : (b.getY() - a.getY());
-        return xAxisDistance + yAxisDistance;
-    }
-
     private int getTreeScenicScore(Tree tree) {
         Tree northBiggestTree = findBiggestTreeAlongDirection(tree, Direction.NORTH);
         Tree southBiggestTree = findBiggestTreeAlongDirection(tree, Direction.SOUTH);
@@ -86,13 +73,13 @@ public class Forest {
         Tree eastBiggestTree = findBiggestTreeAlongDirection(tree, Direction.EAST);
 
         int distanceNorth = northBiggestTree != null ?
-            getDistance(tree.getPosition(), northBiggestTree.getPosition()): 0;
+            Position.getDistance(tree.getPosition(), northBiggestTree.getPosition()): 0;
         int distanceSouth = southBiggestTree != null ?
-            getDistance(tree.getPosition(), southBiggestTree.getPosition()) : 0;
+            Position.getDistance(tree.getPosition(), southBiggestTree.getPosition()) : 0;
         int distanceWest = westBiggestTree != null ?
-            getDistance(tree.getPosition(), westBiggestTree.getPosition()) : 0;
+            Position.getDistance(tree.getPosition(), westBiggestTree.getPosition()) : 0;
         int distanceEast = eastBiggestTree != null ?
-            getDistance(tree.getPosition(), eastBiggestTree.getPosition()) : 0;
+            Position.getDistance(tree.getPosition(), eastBiggestTree.getPosition()) : 0;
 
         return distanceNorth * distanceSouth * distanceWest * distanceEast;
     }
