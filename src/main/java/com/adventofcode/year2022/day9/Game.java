@@ -4,54 +4,44 @@ import com.adventofcode.utils.Direction;
 import com.adventofcode.utils.Position;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Game {
-    private Position head;
-    private Position tail;
     private final List<Action> actions = new ArrayList<>();
-    private final Map<Position, Integer> visitedPositions = new HashMap<>();
+    private List<Knot> knots = new ArrayList<>();
 
-    public Game(List<String> input) {
+    public Game(List<String> input, int knots) {
         for (String command : input) {
             this.actions.add(new Action(command));
         }
 
-        this.head = new Position(0, 0);
-        this.tail = new Position(0, 0);
-    }
-
-    public int getVisitedPositions() {
-        return this.visitedPositions.size();
-    }
-
-    public void updateVisitedPositions(Position position) {
-        Integer visits = this.visitedPositions.get(position);
-        if (visits == null) {
-            visits = 1;
-        } else {
-            visits++;
+        for (int i = 0; i < knots; i++) {
+            this.knots.add(new Knot(
+                i != 0 ? this.knots.getLast(): null,
+                new Position(0, 0)
+            ));
         }
-        this.visitedPositions.put(position, visits);
     }
 
-    private Position nextTailPosition() {
-        boolean onSameColumn = Position.onSameColumn(this.head, this.tail);
-        boolean onSameRow = Position.onSameRow(this.head, this.tail);
-        int distance = Position.getDistance(this.head, this.tail);
+    public int getVisitedPositions(int index) {
+        return this.knots.get(index).getVisitedPositions().size();
+    }
+
+    private Position nextTailPosition(Knot currentKnot, Knot previousKnot) {
+        boolean onSameColumn = Position.onSameColumn(previousKnot.getPosition(), currentKnot.getPosition());
+        boolean onSameRow = Position.onSameRow(previousKnot.getPosition(), currentKnot.getPosition());
+        int distance = Position.getDistance(previousKnot.getPosition(), currentKnot.getPosition());
 
         if ((onSameColumn || onSameRow) && distance <= 1) {
-            return this.tail; // don't move
+            return currentKnot.getPosition(); // don't move
         }
         if ((!onSameColumn && !onSameRow) && distance <= 2) {
-            return this.tail; // don't move
+            return currentKnot.getPosition(); // don't move
         }
 
-        List<Direction> directions = Position.getDirections(this.head, this.tail);
+        List<Direction> directions = Position.getDirections(previousKnot.getPosition(), currentKnot.getPosition());
 
-        Position position = this.tail;
+        Position position = currentKnot.getPosition();
         if (!onSameColumn && !onSameRow) {
             for (Direction direction : directions) {
                 position = Position.getNextPosition(position, direction);
@@ -66,9 +56,15 @@ public class Game {
         for (Action action : this.actions) {
             int count = action.getCount();
             while (count > 0) {
-                this.head = Position.getNextPosition(this.head, action.getDirection());
-                this.tail = nextTailPosition();
-                updateVisitedPositions(this.tail);
+                Knot head = knots.getFirst();
+                head.setPosition(Position.getNextPosition(head.getPosition(), action.getDirection()));
+
+                for (int i = 1; i < this.knots.size(); i++) {
+                    Knot knot = this.knots.get(i);
+                    knot.setPosition(nextTailPosition(knot, knot.getPrevious()));
+                    knot.updateVisitedPositions(knot.getPosition());
+                }
+
                 count--;
             }
         }
