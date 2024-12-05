@@ -15,12 +15,17 @@ public class Position {
     private int x;
     private int y;
 
+    public static Position of(int x, int y) {
+        return new Position(x, y);
+    }
+
     public Position get(Direction direction) {
         return switch (direction) {
             case NORTH -> new Position(this.x - 1, this.y);
             case EAST -> new Position(this.x, this.y + 1);
             case WEST -> new Position(this.x, this.y - 1);
             case SOUTH -> new Position(this.x + 1, this.y);
+            default -> null;
         };
     }
 
@@ -56,10 +61,25 @@ public class Position {
     public static Position getNextPosition(Position position, Direction direction) {
         return switch (direction) {
             case NORTH -> new Position(position.getX(), position.getY() + 1);
+            case NORTH_EAST -> new Position(position.getX() + 1, position.getY() + 1);
+            case NORTH_WEST -> new Position(position.getX() - 1, position.getY() + 1);
             case EAST -> new Position(position.getX() + 1, position.getY());
             case WEST -> new Position(position.getX() - 1, position.getY());
             case SOUTH -> new Position(position.getX(), position.getY() - 1);
+            case SOUTH_EAST -> new Position(position.getX() + 1, position.getY() - 1);
+            case SOUTH_WEST -> new Position(position.getX() - 1, position.getY() - 1);
         };
+    }
+
+    public static Position getNextPositionSafe(Position position, Direction direction, int maxX, int maxY) {
+        Position next = getNextPosition(position, direction);
+        if (next.getX() < 0) {
+            next.setX(maxX + next.getX());
+        }
+        if (next.getY() < 0) {
+            next.setY(maxY + next.getY());
+        }
+        return next;
     }
 
     /***
