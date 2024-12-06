@@ -28,14 +28,14 @@ class Day25Test {
     @Test
     void solveSecondPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day25/second-example.txt"));
-        int result = Day25.solve(input);
+        int result = Day25.solve2(input);
         assertEquals(0, result);
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day25/second-puzzle.txt"));
-        int result = Day25.solve(input);
+        int result = Day25.solve2(input);
         assertEquals(0, result);
     }
 }
