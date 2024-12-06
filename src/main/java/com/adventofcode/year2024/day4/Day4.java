@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Day4 {
 
@@ -20,16 +21,7 @@ public class Day4 {
         private Position from;
         private Position to;
         private Direction direction;
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj != null &&
-                ((this.from.equals(((Match) obj).from) &&
-                this.to.equals(((Match) obj).to)) ||
-                (this.from.equals(((Match) obj).to) &&
-                this.to.equals(((Match) obj).from))
-            );
-        }
+        private Position aLetter;
     }
 
     public static List<String> rotate(List<String> rows) {
@@ -83,6 +75,17 @@ public class Day4 {
     }
 
     private static String buildWord(
+            Character c1,
+            Character c2,
+            Character c3
+    ) {
+        if (c1 == null || c2 == null || c3 == null) {
+            return "";
+        }
+        return "" + c1 + c2 + c3;
+    }
+
+    private static String buildWord(
         Character c1,
         Character c2,
         Character c3,
@@ -94,10 +97,9 @@ public class Day4 {
         return "" + c1 + c2 + c3 + c4;
     }
 
-    public static int solve(List<String> input) {
+    public static List<Match> solve(List<String> input) {
         Map<Position, Character> letters = initialize(input);
 
-        int count = 0;
         List<Match> matches = new ArrayList<>();
 
         int maxSize = input.size();
@@ -113,11 +115,11 @@ public class Day4 {
                 var dx2 = letters.get(Position.of(getIndex(j + 2, maxSize), i));
                 var dx3 = letters.get(Position.of(getIndex(j + 3, maxSize), i));
                 if ("XMAS".equals(buildWord(character, dx1, dx2, dx3))) {
-                    count++;
                     matches.add(new Match(
                         new Position(j,i),
                         Position.of(getIndex(j + 3, maxSize), i),
-                        Direction.EAST
+                        Direction.EAST,
+                        Position.of(getIndex(j + 2, maxSize), i)
                     ));
                 }
 
@@ -125,11 +127,11 @@ public class Day4 {
                 var sx2 = letters.get(Position.of(getIndex(j - 2, maxSize), i));
                 var sx3 = letters.get(Position.of(getIndex(j - 3, maxSize), i));
                 if ("XMAS".equals(buildWord(character, sx1, sx2, sx3))) {
-                    count++;
                     matches.add(new Match(
                         new Position(j,i),
                         Position.of(getIndex(j - 3, maxSize), i),
-                        Direction.WEST
+                        Direction.WEST,
+                        Position.of(getIndex(j - 2, maxSize), i)
                     ));
                 }
 
@@ -137,11 +139,11 @@ public class Day4 {
                 var up2 = letters.get(Position.of(j, getIndex(i - 2, maxSize)));
                 var up3 = letters.get(Position.of(j, getIndex(i - 3, maxSize)));
                 if ("XMAS".equals(buildWord(character, up1, up2, up3))) {
-                    count++;
                     matches.add(new Match(
                         new Position(j,i),
                         Position.of(j, getIndex(i - 3, maxSize)),
-                        Direction.NORTH
+                        Direction.NORTH,
+                        Position.of(j, getIndex(i - 2, maxSize))
                     ));
                 }
 
@@ -149,11 +151,11 @@ public class Day4 {
                 var down2 = letters.get(Position.of(j, getIndex(i + 2, maxSize)));
                 var down3 = letters.get(Position.of(j, getIndex(i + 3, maxSize)));
                 if ("XMAS".equals(buildWord(character, down1, down2, down3))) {
-                    count++;
                     matches.add(new Match(
                         new Position(j,i),
                         Position.of(j, getIndex(i + 3, maxSize)),
-                        Direction.SOUTH
+                        Direction.SOUTH,
+                        Position.of(j, getIndex(i + 2, maxSize))
                     ));
                 }
 
@@ -161,11 +163,11 @@ public class Day4 {
                 var updx2 = letters.get(Position.of(getIndex(j + 2, maxSize), getIndex(i - 2, maxSize)));
                 var updx3 = letters.get(Position.of(getIndex(j + 3, maxSize), getIndex(i - 3, maxSize)));
                 if ("XMAS".equals(buildWord(character, updx1, updx2, updx3))) {
-                    count++;
                     matches.add(new Match(
                         new Position(j,i),
                         Position.of(getIndex(j + 3, maxSize), getIndex(i - 3, maxSize)),
-                        Direction.NORTH_EAST
+                        Direction.NORTH_EAST,
+                        Position.of(getIndex(j + 2, maxSize), getIndex(i - 2, maxSize))
                     ));
                 }
 
@@ -173,11 +175,11 @@ public class Day4 {
                 var upsx2 = letters.get(Position.of(getIndex(j - 2, maxSize), getIndex(i - 2, maxSize)));
                 var upsx3 = letters.get(Position.of(getIndex(j - 3, maxSize), getIndex(i - 3, maxSize)));
                 if ("XMAS".equals(buildWord(character, upsx1, upsx2, upsx3))) {
-                    count++;
                     matches.add(new Match(
                         new Position(j,i),
                         Position.of(getIndex(j - 3, maxSize), getIndex(i - 3, maxSize)),
-                        Direction.NORTH_WEST
+                        Direction.NORTH_WEST,
+                        Position.of(getIndex(j - 2, maxSize), getIndex(i - 2, maxSize))
                     ));
                 }
 
@@ -185,11 +187,11 @@ public class Day4 {
                 var downdx2 = letters.get(Position.of(getIndex(j + 2, maxSize), getIndex(i + 2, maxSize)));
                 var downdx3 = letters.get(Position.of(getIndex(j + 3, maxSize), getIndex(i + 3, maxSize)));
                 if ("XMAS".equals(buildWord(character, downdx1, downdx2, downdx3))) {
-                    count++;
                     matches.add(new Match(
                         new Position(j,i),
                         Position.of(getIndex(j + 3, maxSize), getIndex(i + 3, maxSize)),
-                        Direction.SOUTH_EAST
+                        Direction.SOUTH_EAST,
+                        Position.of(getIndex(j + 2, maxSize), getIndex(i + 2, maxSize))
                     ));
                 }
 
@@ -197,21 +199,83 @@ public class Day4 {
                 var downsx2 = letters.get(Position.of(getIndex(j - 2, maxSize), getIndex(i + 2, maxSize)));
                 var downsx3 = letters.get(Position.of(getIndex(j - 3, maxSize), getIndex(i + 3, maxSize)));
                 if ("XMAS".equals(buildWord(character, downsx1, downsx2, downsx3))) {
-                    count++;
                     matches.add(new Match(
                         new Position(j,i),
                         Position.of(getIndex(j - 3, maxSize), getIndex(i + 3, maxSize)),
-                        Direction.SOUTH_WEST
+                        Direction.SOUTH_WEST,
+                        Position.of(getIndex(j - 2, maxSize), getIndex(i + 2, maxSize))
                     ));
                 }
             }
         }
 
-        return count;
+        return matches;
     }
 
-    public static int solve2(List<String> input) {
-        return 0;
+    public static long solve2(List<String> input) {
+        Map<Position, Character> letters = initialize(input);
+
+        List<Match> matches = new ArrayList<>();
+
+        int maxSize = input.size();
+        for (int i = 0; i < maxSize; i++) {
+            var row = input.get(i);
+            for (int j = 0; j < row.length(); j++) {
+                char character = row.charAt(j);
+                if (character != 'M') {
+                    continue;
+                }
+
+                var updx1 = letters.get(Position.of(getIndex(j + 1, maxSize), getIndex(i - 1, maxSize)));
+                var updx2 = letters.get(Position.of(getIndex(j + 2, maxSize), getIndex(i - 2, maxSize)));
+                if ("MAS".equals(buildWord(character, updx1, updx2))) {
+                    matches.add(new Match(
+                            new Position(j,i),
+                            Position.of(getIndex(j + 2, maxSize), getIndex(i - 2, maxSize)),
+                            Direction.NORTH_EAST,
+                            Position.of(getIndex(j + 1, maxSize), getIndex(i - 1, maxSize))
+                    ));
+                }
+
+                var upsx1 = letters.get(Position.of(getIndex(j - 1, maxSize), getIndex(i - 1, maxSize)));
+                var upsx2 = letters.get(Position.of(getIndex(j - 2, maxSize), getIndex(i - 2, maxSize)));
+                if ("MAS".equals(buildWord(character, upsx1, upsx2))) {
+                    matches.add(new Match(
+                            new Position(j,i),
+                            Position.of(getIndex(j - 2, maxSize), getIndex(i - 2, maxSize)),
+                            Direction.NORTH_WEST,
+                            Position.of(getIndex(j - 1, maxSize), getIndex(i - 1, maxSize))
+                    ));
+                }
+
+                var downdx1 = letters.get(Position.of(getIndex(j + 1, maxSize), getIndex(i + 1, maxSize)));
+                var downdx2 = letters.get(Position.of(getIndex(j + 2, maxSize), getIndex(i + 2, maxSize)));
+                if ("MAS".equals(buildWord(character, downdx1, downdx2))) {
+                    matches.add(new Match(
+                            new Position(j,i),
+                            Position.of(getIndex(j + 2, maxSize), getIndex(i + 2, maxSize)),
+                            Direction.SOUTH_EAST,
+                            Position.of(getIndex(j + 1, maxSize), getIndex(i + 1, maxSize))
+                    ));
+                }
+
+                var downsx1 = letters.get(Position.of(getIndex(j - 1, maxSize), getIndex(i + 1, maxSize)));
+                var downsx2 = letters.get(Position.of(getIndex(j - 2, maxSize), getIndex(i + 2, maxSize)));
+                if ("MAS".equals(buildWord(character, downsx1, downsx2))) {
+                    matches.add(new Match(
+                            new Position(j,i),
+                            Position.of(getIndex(j - 2, maxSize), getIndex(i + 2, maxSize)),
+                            Direction.SOUTH_WEST,
+                            Position.of(getIndex(j - 1, maxSize), getIndex(i + 1, maxSize))
+                    ));
+                }
+            }
+        }
+
+        return matches.stream()
+            .collect(Collectors.groupingBy(m -> m.aLetter, Collectors.counting()))
+            .values().stream()
+            .filter(v -> v == 2)
+            .count();
     }
-    
 }
