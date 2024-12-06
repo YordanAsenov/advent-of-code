@@ -1,5 +1,8 @@
 package com.adventofcode.year2024.day5;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,6 +80,42 @@ public class Day5 {
         return true;
     }
 
+    private static void order(
+        List<Integer> pageUpdate,
+        HashMap<Integer, List<Integer>> order
+    ) {
+        while (!isOrdered(pageUpdate, order)) {
+            var sequence = Arrays.toString(pageUpdate.toArray());
+
+            for (Integer number : pageUpdate) {
+                int index = sequence.indexOf(number.toString());
+
+                List<Integer> numbersBefore = order.get(number);
+                if (numbersBefore == null) {
+                    continue; // no validation required
+                }
+
+                for (Integer otherNumber : numbersBefore) {
+                    int otherIndex = sequence.indexOf(otherNumber.toString());
+                    if (otherIndex == -1) {
+                        continue;
+                    }
+
+                    if (index > otherIndex) {
+                        int n1 = number;
+                        int n2 = otherNumber;
+                        int i1 = pageUpdate.indexOf(n1);
+                        int i2 = pageUpdate.indexOf(n2);
+
+                        pageUpdate.set(i1, n2);
+                        pageUpdate.set(i2, n1);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     public static int solve(List<String> input) {
         HashMap<Integer, List<Integer>> order = initOrder(input);
         List<List<Integer>> pageUpdates = initPageUpdates(input);
@@ -92,12 +131,18 @@ public class Day5 {
         HashMap<Integer, List<Integer>> order = initOrder(input);
         List<List<Integer>> pageUpdates = initPageUpdates(input);
 
-        List<List<Integer>> unorderedPageUpdates = pageUpdates.stream()
+        var unorderedPageUpdates = pageUpdates.stream()
             .filter(u -> !isOrdered(u, order))
             .toList();
 
+        int sum = 0;
+        for (List<Integer> unorderedPageUpdate : unorderedPageUpdates) {
+            ArrayList<Integer> temp = new ArrayList<>(unorderedPageUpdate);
+            order(temp, order);
+            System.out.println("Page update: " + temp + " is now sorted");
+            sum += temp.get(temp.size() / 2);
+        }
 
-
-        return 0;
+        return sum;
     }
 }
