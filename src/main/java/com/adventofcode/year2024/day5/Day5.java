@@ -1,8 +1,5 @@
 package com.adventofcode.year2024.day5;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

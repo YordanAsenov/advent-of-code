@@ -32,4 +32,14 @@ public enum Direction {
             case SOUTH_WEST -> Direction.NORTH_EAST;
         };
     }
+
+    public static Direction rotate(Direction currentDirection, boolean right) {
+        return switch (currentDirection) {
+            case NORTH -> right ? Direction.EAST : Direction.WEST;
+            case EAST -> right ? Direction.SOUTH : Direction.NORTH;
+            case SOUTH -> right ? Direction.WEST : Direction.EAST;
+            case WEST -> right ? Direction.NORTH : Direction.SOUTH;
+            default -> null;
+        };
+    }
 }
