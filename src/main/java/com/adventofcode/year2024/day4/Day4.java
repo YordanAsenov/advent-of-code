@@ -75,9 +75,9 @@ public class Day4 {
     }
 
     private static String buildWord(
-            Character c1,
-            Character c2,
-            Character c3
+        Character c1,
+        Character c2,
+        Character c3
     ) {
         if (c1 == null || c2 == null || c3 == null) {
             return "";
@@ -230,10 +230,10 @@ public class Day4 {
                 var updx2 = letters.get(Position.of(getIndex(j + 2, maxSize), getIndex(i - 2, maxSize)));
                 if ("MAS".equals(buildWord(character, updx1, updx2))) {
                     matches.add(new Match(
-                            new Position(j,i),
-                            Position.of(getIndex(j + 2, maxSize), getIndex(i - 2, maxSize)),
-                            Direction.NORTH_EAST,
-                            Position.of(getIndex(j + 1, maxSize), getIndex(i - 1, maxSize))
+                        new Position(j,i),
+                        Position.of(getIndex(j + 2, maxSize), getIndex(i - 2, maxSize)),
+                        Direction.NORTH_EAST,
+                        Position.of(getIndex(j + 1, maxSize), getIndex(i - 1, maxSize))
                     ));
                 }
 
@@ -241,10 +241,10 @@ public class Day4 {
                 var upsx2 = letters.get(Position.of(getIndex(j - 2, maxSize), getIndex(i - 2, maxSize)));
                 if ("MAS".equals(buildWord(character, upsx1, upsx2))) {
                     matches.add(new Match(
-                            new Position(j,i),
-                            Position.of(getIndex(j - 2, maxSize), getIndex(i - 2, maxSize)),
-                            Direction.NORTH_WEST,
-                            Position.of(getIndex(j - 1, maxSize), getIndex(i - 1, maxSize))
+                        new Position(j,i),
+                        Position.of(getIndex(j - 2, maxSize), getIndex(i - 2, maxSize)),
+                        Direction.NORTH_WEST,
+                        Position.of(getIndex(j - 1, maxSize), getIndex(i - 1, maxSize))
                     ));
                 }
 
@@ -252,10 +252,10 @@ public class Day4 {
                 var downdx2 = letters.get(Position.of(getIndex(j + 2, maxSize), getIndex(i + 2, maxSize)));
                 if ("MAS".equals(buildWord(character, downdx1, downdx2))) {
                     matches.add(new Match(
-                            new Position(j,i),
-                            Position.of(getIndex(j + 2, maxSize), getIndex(i + 2, maxSize)),
-                            Direction.SOUTH_EAST,
-                            Position.of(getIndex(j + 1, maxSize), getIndex(i + 1, maxSize))
+                        new Position(j,i),
+                        Position.of(getIndex(j + 2, maxSize), getIndex(i + 2, maxSize)),
+                        Direction.SOUTH_EAST,
+                        Position.of(getIndex(j + 1, maxSize), getIndex(i + 1, maxSize))
                     ));
                 }
 
@@ -263,10 +263,10 @@ public class Day4 {
                 var downsx2 = letters.get(Position.of(getIndex(j - 2, maxSize), getIndex(i + 2, maxSize)));
                 if ("MAS".equals(buildWord(character, downsx1, downsx2))) {
                     matches.add(new Match(
-                            new Position(j,i),
-                            Position.of(getIndex(j - 2, maxSize), getIndex(i + 2, maxSize)),
-                            Direction.SOUTH_WEST,
-                            Position.of(getIndex(j - 1, maxSize), getIndex(i + 1, maxSize))
+                        new Position(j,i),
+                        Position.of(getIndex(j - 2, maxSize), getIndex(i + 2, maxSize)),
+                        Direction.SOUTH_WEST,
+                        Position.of(getIndex(j - 1, maxSize), getIndex(i + 1, maxSize))
                     ));
                 }
             }
