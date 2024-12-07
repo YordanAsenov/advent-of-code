@@ -14,28 +14,28 @@ class Day7Test {
     @Test
     void solveFirstPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day7/first-example.txt"));
-        int result = Day7.solve(input);
-        assertEquals(0, result);
+        long result = Day7.solve(input);
+        assertEquals(3749, result);
     }
 
     @Test
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day7/first-puzzle.txt"));
-        int result = Day7.solve(input);
-        assertEquals(0, result);
+        long result = Day7.solve(input);
+        assertEquals(5030892084481L, result);
     }
 
     @Test
     void solveSecondPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day7/second-example.txt"));
-        int result = Day7.solve2(input);
+        long result = Day7.solve2(input);
         assertEquals(0, result);
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day7/second-puzzle.txt"));
-        int result = Day7.solve2(input);
+        long result = Day7.solve2(input);
         assertEquals(0, result);
     }
 }
