@@ -15,14 +15,14 @@ class Day8Test {
     void solveFirstPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day8/first-example.txt"));
         int result = Day8.solve(input);
-        assertEquals(0, result);
+        assertEquals(14, result);
     }
 
     @Test
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day8/first-puzzle.txt"));
         int result = Day8.solve(input);
-        assertEquals(0, result);
+        assertEquals(254, result);
     }
 
     @Test
