@@ -38,14 +38,6 @@ public class Day8 {
             && position.getY() < boundaries;
     }
 
-    private static int diff(int first, int second) {
-        if (first >= second) {
-            return first - second;
-        } else {
-            return second - first;
-        }
-    }
-
     private static int countAntiNodes(HashMap<Character, List<Position>> signals, int boundaries) {
         List<Position> antiNodes = new ArrayList<>();
 
@@ -87,7 +79,49 @@ public class Day8 {
         return countAntiNodes(signals, input.size());
     }
 
+
+    private static int countAntiNodes2(HashMap<Character, List<Position>> signals, int boundaries) {
+        List<Position> antiNodes = new ArrayList<>();
+
+        for (Character signal : signals.keySet()) {
+            List<Position> antennas = signals.get(signal);
+
+            for (int i = 0; i < antennas.size(); i++) {
+                for (int j = 0; j < antennas.size(); j++) {
+                    if (i == j) {
+                        continue;
+                    }
+
+                    Position one = antennas.get(i);
+                    Position two = antennas.get(j);
+
+                    int diffX = two.getX() - one.getX();
+                    int diffY = two.getY() - one.getY();
+
+                    Position antiNode1 = Position.of(one.getX() - diffX, one.getY() - diffY);
+                    while (inBoundaries(antiNode1, boundaries)) {
+                        antiNodes.add(antiNode1);
+                        antiNode1 = Position.of(antiNode1.getX() - diffX, antiNode1.getY() - diffY);
+                    }
+
+                    Position antiNode2 = Position.of(two.getX() - diffX, two.getY() - diffY);
+                    while (inBoundaries(antiNode2, boundaries)) {
+                        antiNodes.add(antiNode2);
+                        antiNode2 = Position.of(antiNode2.getX() - diffX, antiNode2.getY() - diffY);
+                    }
+
+                    int a = 1;
+                }
+            }
+        }
+
+        return (int) antiNodes.stream()
+            .distinct()
+            .count();
+    }
+
     public static int solve2(List<String> input) {
-        return 0;
+        HashMap<Character, List<Position>> signals = initSignals(input);
+        return countAntiNodes2(signals, input.size());
     }
 }
