@@ -29,13 +29,13 @@ class Day6Test {
     void solveSecondPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day6/second-example.txt"));
         int result = Day6.solve2(input);
-        assertEquals(0, result);
+        assertEquals(6, result);
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day6/second-puzzle.txt"));
         int result = Day6.solve2(input);
-        assertEquals(0, result);
+        assertEquals(1530, result);
     }
 }

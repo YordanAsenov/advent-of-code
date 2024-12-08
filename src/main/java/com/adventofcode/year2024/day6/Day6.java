@@ -10,7 +10,6 @@ public class Day6 {
 
     private static List<Position> initObstacles(List<String> input) {
         List<Position> obstacles = new ArrayList<>();
-
         for (int i = 0; i < input.size(); i++) {
             var row = input.get(i);
             for (int j = 0; j < row.length(); j++) {
@@ -19,7 +18,6 @@ public class Day6 {
                 }
             }
         }
-
         return obstacles;
     }
 
@@ -32,7 +30,6 @@ public class Day6 {
                 }
             }
         }
-
         return null;
     }
 
@@ -43,70 +40,91 @@ public class Day6 {
             && position.getY() < boundaries;
     }
 
-    private static List<Position> move(
+    private static List<VisitedPosition> getVisitedPositions(
         List<String> input,
-        List<Position> obstacles,
-        Position startPosition
+        final List<Position> obstacles,
+        final Position startPosition
     ) {
-        List<Position> visited = new ArrayList<>();
-        visited.add(startPosition);
+        List<VisitedPosition> visited = new ArrayList<>();
 
         Position position = startPosition;
         Direction direction = Direction.NORTH;
 
-        do {
+        while (inBoundaries(position, input.size())) {
+            visited.add(new VisitedPosition(position, direction));
+
             Position nextPosition = Position.getNextPosition(position, direction);
-            if (obstacles.contains(nextPosition)) {
+            while (obstacles.contains(nextPosition)) {
                 direction = Direction.rotate(direction, true);
                 nextPosition = Position.getNextPosition(position, direction);
             }
+
             position = nextPosition;
 
-            if (inBoundaries(position, input.size())) {
-                visited.add(position);
+            final VisitedPosition temp = new VisitedPosition(position, direction);
+            if (visited.size() > 1 && visited.contains(temp)) {
+                return List.of();
             }
-        } while (inBoundaries(position, input.size()));
+        }
 
         return visited;
     }
 
-    private static void debug(
-        List<String> input,
-        List<Position> visitedPositions
-    ) {
-        visitedPositions = visitedPositions.stream()
+    public static int solve(List<String> input) {
+        List<Position> obstacles = initObstacles(input);
+        final Position startPosition = getInitialPosition(input);
+        List<VisitedPosition> visitedPositions = getVisitedPositions(input, obstacles, startPosition);
+
+        return (int) visitedPositions.stream()
+            .map(VisitedPosition::position)
             .distinct()
+            .count();
+    }
+
+    private record VisitedPosition(Position position, Direction direction) {}
+
+    private static int countPossibleObstructions(
+        List<String> input,
+        final List<Position> obstacles,
+        Position startPosition
+    ) {
+        int count = 0;
+
+        List<Position> defaultPath = getVisitedPositions(input, obstacles, startPosition).stream()
+            .map(p -> p.position)
             .toList();
 
         for (int i = 0; i < input.size(); i++) {
             var row = input.get(i);
             for (int j = 0; j < row.length(); j++) {
                 if (row.charAt(j) == '#') {
-                    System.out.print('#');
-                } else if (visitedPositions.contains(Position.of(j,i))) {
-                    System.out.print('X');
-                } else {
-                    System.out.print('.');
+                    continue;
                 }
+                var currentPosition = Position.of(j,i);
+                if (startPosition.equals(currentPosition)) {
+                    continue;
+                }
+                if (!defaultPath.contains(currentPosition)) {
+                    continue;
+                }
+
+                obstacles.add(currentPosition);
+
+                List<VisitedPosition> visitedPositions = getVisitedPositions(input, obstacles, startPosition);
+                if (visitedPositions.isEmpty()) {
+                    count++;
+                }
+
+                obstacles.remove(currentPosition);
             }
-            System.out.println();
         }
 
-    }
-
-    public static int solve(List<String> input) {
-        List<Position> obstacles = initObstacles(input);
-        Position startPosition = getInitialPosition(input);
-        List<Position> visitedPositions = move(input, obstacles, startPosition);
-
-        debug(input, visitedPositions);
-
-        return (int) visitedPositions.stream()
-            .distinct()
-            .count();
+        return count;
     }
 
     public static int solve2(List<String> input) {
-        return 0;
+        List<Position> obstacles = initObstacles(input);
+        Position startPosition = getInitialPosition(input);
+        return countPossibleObstructions(input, obstacles, startPosition);
     }
 }
