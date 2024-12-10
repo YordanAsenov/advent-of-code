@@ -156,7 +156,31 @@ public class Day10 {
         return countTrailheads(trailheads);
     }
 
-    public static int solve2(List<String> input) {
-        return 0;
+    private static long countTrailheadsRating(List<FinalPosition> positions) {
+        return positions.size();
+    }
+
+    public static long solve2(List<String> input) {
+        final List<Position> startingPositions = new ArrayList<>();
+        final HashMap<Position, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < input.size(); i++) {
+            var row = input.get(i);
+            for (int j = 0; j < row.length(); j++) {
+                Position current = Position.of(j, i);
+                if (row.charAt(j) == '.') {
+                    map.put(current, 99);
+                } else {
+                    map.put(current, Integer.parseInt("" + row.charAt(j)));
+                }
+
+                if (row.charAt(j) == '0') {
+                    startingPositions.add(current);
+                }
+            }
+        }
+
+        List<FinalPosition> trailheads = findTrailheads(input.size(), map, startingPositions);
+        return countTrailheadsRating(trailheads);
     }
 }

@@ -49,14 +49,14 @@ class Day10Test {
     @Test
     void solveSecondPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/second-example.txt"));
-        int result = Day10.solve2(input);
-        assertEquals(0, result);
+        long result = Day10.solve2(input);
+        assertEquals(81, result);
     }
 
     @Test
     void solveSecondPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/second-puzzle.txt"));
-        int result = Day10.solve2(input);
-        assertEquals(0, result);
+        long result = Day10.solve2(input);
+        assertEquals(1514, result);
     }
 }
