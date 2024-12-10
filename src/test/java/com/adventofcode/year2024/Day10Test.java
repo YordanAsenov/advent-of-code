@@ -12,16 +12,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Day10Test {
     @Test
-    void solveFirstPartExample() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/first-example.txt"));
-        int result = Day10.solve(input);
-        assertEquals(0, result);
+    void solveFirstPartExample1() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/example-1.txt"));
+        long result = Day10.solve(input);
+        assertEquals(2, result);
+    }
+
+    @Test
+    void solveFirstPartExample2() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/example-2.txt"));
+        long result = Day10.solve(input);
+        assertEquals(4, result);
+    }
+
+    @Test
+    void solveFirstPartExample3() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/example-3.txt"));
+        long result = Day10.solve(input);
+        assertEquals(3, result);
+    }
+
+    @Test
+    void solveFirstPartExample4() throws IOException {
+        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/example-4.txt"));
+        long result = Day10.solve(input);
+        assertEquals(36, result);
     }
 
     @Test
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/first-puzzle.txt"));
-        int result = Day10.solve(input);
+        long result = Day10.solve(input);
         assertEquals(0, result);
     }
 
