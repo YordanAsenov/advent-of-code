@@ -43,7 +43,7 @@ class Day10Test {
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day10/first-puzzle.txt"));
         long result = Day10.solve(input);
-        assertEquals(0, result);
+        assertEquals(733, result);
     }
 
     @Test
