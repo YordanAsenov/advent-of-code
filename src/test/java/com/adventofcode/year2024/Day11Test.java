@@ -3,10 +3,6 @@ package com.adventofcode.year2024;
 import com.adventofcode.year2024.day11.Day11;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Day11Test {
