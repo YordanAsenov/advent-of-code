@@ -6,36 +6,35 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Day11Test {
     @Test
-    void solveFirstPartExample() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day11/first-example.txt"));
-        int result = Day11.solve(input);
-        assertEquals(0, result);
+    void solveFirstPartExampleOne() {
+        String input = "0 1 10 99 999";
+        long result = Day11.solve(input, 1);
+        assertEquals(7, result);
     }
 
     @Test
-    void solveFirstPartPuzzle() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day11/first-puzzle.txt"));
-        int result = Day11.solve(input);
-        assertEquals(0, result);
+    void solveFirstPartExampleTwo() {
+        String input = "125 17";
+        long result = Day11.solve(input, 25);
+        assertEquals(55312, result);
     }
 
     @Test
-    void solveSecondPartExample() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day11/second-example.txt"));
-        int result = Day11.solve2(input);
-        assertEquals(0, result);
+    void solveFirstPartPuzzle() {
+        String input = "70949 6183 4 3825336 613971 0 15 182";
+        long result = Day11.solve(input, 25);
+        assertEquals(185205, result);
     }
 
     @Test
-    void solveSecondPartPuzzle() throws IOException {
-        List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day11/second-puzzle.txt"));
-        int result = Day11.solve2(input);
-        assertEquals(0, result);
+    void solveSecondPartPuzzle() {
+        String input = "70949 6183 4 3825336 613971 0 15 182";
+        long result = Day11.solve(input, 75);
+        assertEquals(185205, result);
     }
 }
