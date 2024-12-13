@@ -36,7 +36,7 @@ class Day12Test {
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day12/first-puzzle.txt"));
         long result = Day12.solve(input);
-        assertEquals(0, result);
+        assertEquals(1359028, result);
     }
 
     @Test
