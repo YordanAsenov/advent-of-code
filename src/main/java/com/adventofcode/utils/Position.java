@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode
-public class Position {
+public class Position implements Comparable<Position> {
     private int x;
     private int y;
 
@@ -61,13 +61,13 @@ public class Position {
     public static Position getNextPosition(Position position, Direction direction) {
         return switch (direction) {
             case NORTH -> new Position(position.getX(), position.getY() - 1);
-            case NORTH_EAST -> new Position(position.getX() - 1, position.getY() - 1);
-            case NORTH_WEST -> new Position(position.getX() + 1, position.getY() - 1);
-            case EAST -> new Position(position.getX() - 1, position.getY());
-            case WEST -> new Position(position.getX() + 1, position.getY());
+            case NORTH_EAST -> new Position(position.getX() + 1, position.getY() - 1);
+            case NORTH_WEST -> new Position(position.getX() - 1, position.getY() - 1);
+            case EAST -> new Position(position.getX() + 1, position.getY());
+            case WEST -> new Position(position.getX() - 1, position.getY());
             case SOUTH -> new Position(position.getX(), position.getY() + 1);
-            case SOUTH_EAST -> new Position(position.getX() - 1, position.getY() + 1);
-            case SOUTH_WEST -> new Position(position.getX() + 1, position.getY() + 1);
+            case SOUTH_EAST -> new Position(position.getX() + 1, position.getY() + 1);
+            case SOUTH_WEST -> new Position(position.getX() - 1, position.getY() + 1);
         };
     }
 
@@ -121,5 +121,12 @@ public class Position {
     @Override
     public String toString() {
         return "(" + x + "," + y + ')';
+    }
+
+    @Override
+    public int compareTo(Position o) {
+        if (o == null)
+            return 1;
+        return (10000 * (this.x - o.getX())) + (this.y - o.getY());
     }
 }
