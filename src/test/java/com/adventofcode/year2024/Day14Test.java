@@ -149,7 +149,7 @@ class Day14Test {
     @Test
     void solveSecondPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day14/second-puzzle.txt"));
-        int result = Day14.solve2(input);
-        assertEquals(0, result);
+        int result = Day14.solve2(input, 101, 103);
+        assertEquals(7584, result);
     }
 }

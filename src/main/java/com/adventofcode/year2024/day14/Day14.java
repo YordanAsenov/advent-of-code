@@ -2,6 +2,7 @@ package com.adventofcode.year2024.day14;
 
 import com.adventofcode.utils.Position;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Day14 {
@@ -110,13 +111,80 @@ public class Day14 {
             .toList();
     }
 
+    public static List<Dispersion> getDispersions(List<String> input, int times, Grid grid) {
+        List<Dispersion> dispersions = new ArrayList<>();
+
+        List<Robot> robots = buildRobots(input);
+
+        for (int i = 0; i < times; i++) {
+            List<Robot> robotsAfterMove = new ArrayList<>();
+            for (Robot robot : robots) {
+                robot = robot.moveInside(grid);
+                robotsAfterMove.add(robot);
+            }
+            robots = robotsAfterMove;
+
+            List<Position> robotPositions = robots.stream()
+                .map(r -> r.position)
+                .toList();
+            Dispersion dispersion = new Dispersion(i, dispersion(robotPositions));
+            dispersions.add(dispersion);
+        }
+
+        return dispersions;
+    }
+
     public static long solve(List<String> input, int width, int height) {
         Grid grid = new Grid(width, height);
         List<Position> robotPositions = moveRobotsInGrid(input, 100, grid);
         return getSecureFactor(robotPositions, grid);
     }
 
-    public static int solve2(List<String> input) {
-        return 0;
+    private static void printGridWithRobots(List<Position> robotPositions, Grid grid) {
+        for (int i = 0; i < grid.width; i++) {
+            for (int j = 0; j < grid.height; j++) {
+                var current = Position.of(j, i);
+                if (robotPositions.contains(current)) {
+                    System.out.print("#");
+                } else {
+                    System.out.print(".");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public record Dispersion(int time, double percentage) implements Comparable<Dispersion> {
+        @Override
+        public int compareTo(Dispersion o) {
+            return Double.compare(percentage, o.percentage);
+        }
+    }
+
+    private static double dispersion(List<Position> robotPositions) {
+        var totalDispersion = robotPositions.stream()
+            .map(p -> (int) p.getPositionsAround().stream()
+                .filter(robotPositions::contains)
+                .count())
+            .reduce(0, Integer::sum);
+
+        return (double) totalDispersion / (4 * robotPositions.size());
+    }
+
+    public static int solve2(List<String> input, int width, int height) {
+        Grid grid = new Grid(width, height);
+
+        int totalPossibleCombinations = grid.width * grid.height;
+        List<Dispersion> dispersions = getDispersions(input, totalPossibleCombinations, grid);
+        Collections.sort(dispersions);
+
+        int appearTime = dispersions.getLast().time + 1;
+
+        // debug
+        List<Position> robotPositions = moveRobotsInGrid(input, appearTime, grid);
+        printGridWithRobots(robotPositions, grid);
+        // end debug
+
+        return appearTime;
     }
 }
