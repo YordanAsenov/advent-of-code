@@ -111,11 +111,15 @@ public class Position implements Comparable<Position> {
         return directions;
     }
 
-    public boolean inBoundaries(int boundaries) {
+    public boolean inBoundaries(int width, int height) {
         return this.getX() >= 0
             && this.getY() >= 0
-            && this.getX() < boundaries
-            && this.getY() < boundaries;
+            && this.getX() < width
+            && this.getY() < height;
+    }
+
+    public boolean inBoundaries(int boundaries) {
+        return this.inBoundaries(boundaries, boundaries);
     }
 
     @Override
