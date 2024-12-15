@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Day13 {
-    public record Vector(int x, int y) {}
+    public record Vector(long x, long y) {}
     public record Play(Vector a, Vector b, Vector p) {}
 
-    public static List<Play> initPlay(List<String> input) {
+    public static List<Play> initPlay(List<String> input, boolean addOffset) {
         List<Play> plays = new ArrayList<>();
 
         for (int i = 0; i < input.size(); i += 4) {
@@ -24,7 +24,10 @@ public class Day13 {
             String prizeInput = input.get(i + 2);
             int prizeX = Integer.parseInt(prizeInput.substring(prizeInput.indexOf("X=") + 2, prizeInput.indexOf(",")));
             int prizeY = Integer.parseInt(prizeInput.substring(prizeInput.indexOf("Y=") + 2));
-            Vector vectorC = new Vector(prizeX, prizeY);
+            Vector vectorC = new Vector(
+                addOffset ? prizeX + 10000000000000L : prizeX,
+                addOffset ? prizeY + 10000000000000L : prizeY
+            );
 
             plays.add(new Play(vectorA, vectorB, vectorC));
         }
@@ -69,11 +72,12 @@ public class Day13 {
     }
 
     public static long solve(List<String> input) {
-        List<Play> plays = initPlay(input);
+        List<Play> plays = initPlay(input, false);
         return getTotalScore(plays);
     }
 
-    public static int solve2(List<String> input) {
-        return 0;
+    public static long solve2(List<String> input) {
+        List<Play> plays = initPlay(input, true);
+        return getTotalScore(plays);
     }
 }
