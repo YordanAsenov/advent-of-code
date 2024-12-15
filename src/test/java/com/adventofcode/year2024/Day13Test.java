@@ -14,15 +14,15 @@ class Day13Test {
     @Test
     void solveFirstPartExample() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day13/first-example.txt"));
-        int result = Day13.solve(input);
-        assertEquals(0, result);
+        long result = Day13.solve(input);
+        assertEquals(480, result);
     }
 
     @Test
     void solveFirstPartPuzzle() throws IOException {
         List<String> input = Files.readAllLines(Path.of("src/test/resources/input/2024/day13/first-puzzle.txt"));
-        int result = Day13.solve(input);
-        assertEquals(0, result);
+        long result = Day13.solve(input);
+        assertEquals(36838, result);
     }
 
     @Test
